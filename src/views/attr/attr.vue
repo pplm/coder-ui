@@ -59,7 +59,9 @@
             </Col>
             <Col span="10" style="margin-bottom: -15px;">
                 <FormItem label="类型" prop="type">
-                    <Input type="text" v-model="saveForm.type" placeholder="请输入类型"></Input>
+                    <Select v-model="saveForm.type" clearable placeholder="请选择类型" style="width:174px">
+                        <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
                 </FormItem>
             </Col>
             <Col span="10" style="margin-bottom: -15px;">
@@ -215,6 +217,22 @@ export default {
                 size: 10,
                 current: 1,
                 num: 0
+            },
+            dict: {
+                type: [
+                    {
+                        label: 'string',
+                        value: 'string'
+                    },
+                    {
+                        label: 'datetime',
+                        value: 'datetime'
+                    },
+                    {
+                        label: 'enum',
+                        value: 'enum'
+                    }
+                ]
             }
         }
     },
@@ -224,7 +242,6 @@ export default {
     methods: {
         init () {
             this.fid = this.$route.params.fid
-            console.log('!!!!!' + this.fid)
             this.clearPage()
             this.getList()
         },
@@ -246,7 +263,11 @@ export default {
             util.ajax.post('/attr/save/' + this.fid, this.saveForm).then(function (res) {
                 _self.saveModal.show = false
                 _self.$Message.info('操作成功')
-                _self.doQuery()
+                if (_self.saveForm.id === '') {
+                    _self.doQuery()
+                } else {
+                    _self.getList()
+                }
               }).catch(function (err) {
                 _self.saveModal.show = false
               })

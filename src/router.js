@@ -233,7 +233,7 @@ export const appRouter = [
         path: '/test1',
         icon: 'android-sad',
         title: '测试管理',
-        name: 'funcManagement',
+        name: 'test1Management',
         component: Main,
         children: [
             { path: 'test1Management', title: '测试1管理', name: 'test1_management', component: resolve => { require(['./views/attr/test.vue'], resolve); } }
