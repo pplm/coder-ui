@@ -97,7 +97,6 @@ export default {
         						},
                                 on: {
                               		click: () => {
-                              			console.log("哈哈" + params.row.id)
                               			let args = {
                               				fid: params.row.id
                               			}
@@ -246,10 +245,7 @@ export default {
 			}
     	},
     	clearPage () {
-    		this.page = {
-    			size: 10,
-    			current: 1
-    		}
+    		this.page.current = 1
     	},
 		changePage (number) {
 			this.page.num = number - 1

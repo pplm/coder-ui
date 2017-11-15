@@ -1,8 +1,4 @@
 <template>
-<Card>
-                <h4 slot="title">
-
-                </h4>
     <div>
         <EditableTable :table-data="tableData1" :columns-list="tableColumns1" :saveEdit="saveEdit" :deleteRow="deleteRow"></EditableTable>
         <div style="margin: 10px;overflow: hidden">
@@ -11,10 +7,9 @@
             </div>
         </div>
     </div>
-	</Card>
 </template>
 <script>
-    import EditableTable from './canEditTable.vue';
+    import EditableTable from './editableTable.vue';
     export default {
         name: 'multiPageTable',
         components: {

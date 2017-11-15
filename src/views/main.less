@@ -1,5 +1,21 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    background: #f0f0f0;
+    overflow: hidden;
+}
+.lock-screen-back{
+    border-radius: 50%;
+    z-index: -1;
+    box-shadow: 0 0 0 0 #667aa6 inset;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    transition: all 3s;
+}
 .main{
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     .unlock-con{
@@ -15,7 +31,13 @@
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 1010;
+        z-index: 21;
+        transition: width .3s;
+    }
+    .layout-text{
+        display: inline-block;
+        white-space:nowrap;
+        position: absolute;
     }
     .main-hide-text .layout-text{
         display: none;
@@ -30,8 +52,9 @@
         padding-left: 200px;
         width: 100%;
         height: 100px;
-        z-index: 1000;
+        z-index: 20;
         box-shadow: 0 2px 1px 1px rgba(100,100,100,.1);
+        transition: padding .3s;
     }
     &-breadcrumb{
         padding: 8px 15px 0;
@@ -131,6 +154,8 @@
                     .main-user-name{
                         display: inline-block;
                         width: 80px;
+                        word-break: keep-all;
+                        white-space: nowrap;
                         vertical-align: middle;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -165,10 +190,14 @@
         }
     }
     .single-page-con{
-        box-sizing: border-box;
-        padding: 100px 0 10px;
+        position: absolute;
+        top: 100px;
+        right: 0;
+        bottom: 0;
+        overflow: auto;
         background-color: #F0F0F0;
-        z-index: -1;
+        z-index: 1;
+        transition: left .3s;
         .single-page{
             margin: 10px;
         }
@@ -184,7 +213,9 @@
 }
 .logo-con{
     padding: 8px;
+    text-align: center;
     img{
-        width: 100%;
+        height: 44px;
+        width: auto;
     }
 }

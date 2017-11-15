@@ -5,7 +5,8 @@ export const loginRouter = {
     path: '/login',
     name: 'login',
     meta: {
-        title: 'Login - 登录'
+        title: 'Login - 登录',
+		unauth: true
     },
     component: resolve => { require(['./views/login.vue'], resolve); }
 };
@@ -53,15 +54,13 @@ export const locking = {
 export const otherRouter = {
     path: '/',
     name: 'otherRouter',
-    redirect: '/home',
     component: Main,
     children: [
-        { path: 'home', title: '首页', name: 'home_index', component: resolve => { require(['./views/home/home.vue'], resolve); } },
+        { path: 'home', title: {i18n: 'home'}, name: 'home_index', component: resolve => { require(['./views/home/home.vue'], resolve); } },
         { path: 'ownspace', title: '个人中心', name: 'ownspace_index', component: resolve => { require(['./views/own-space/own-space.vue'], resolve); } },
-        { path: 'ownspace/:username', title: '带参个人中心', name: 'ownspace_with_name', component: resolve => { require(['./views/own-space/own-space.vue'], resolve); } },  // 用于展示带参路由
-        { path: 'order/:order_id', title: '订单详情', name: 'order_info', component: resolve => { require(['./views/argument-page/order-info.vue'], resolve); } },  // 用于展示带参路由
-        { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['./views/message/message.vue'], resolve); } },
-        { path: 'attr/:fid', title: '属性管理', name: 'attr_management', component: resolve => { require(['./views/attr/attr.vue'], resolve); } }
+        { path: 'order/:order_id', title: '订单详情', name: 'order_info', component: resolve => { require(['./views/advanced-router/component/order-info.vue'], resolve); } },  // 用于展示动态路由
+        { path: 'shopping', title: '购物详情', name: 'shopping', component: resolve => { require(['./views/advanced-router/component/shopping-info.vue'], resolve); } },  // 用于展示带参路由
+        { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['./views/message/message.vue'], resolve); } }
     ]
 };
 
@@ -69,7 +68,6 @@ export const otherRouter = {
 export const appRouter = [
     {
         path: '/access',
-        redirect: '/access/index',
         icon: 'key',
         name: 'access',
         title: '权限管理',
@@ -87,6 +85,16 @@ export const appRouter = [
         component: Main,
         children: [
             { path: 'index', title: '权限测试页', name: 'accesstest_index' }
+        ]
+    },
+    {
+        path: '/international',
+        icon: 'earth',
+        title: {i18n: 'international'},
+        name: 'international',
+        component: Main,
+        children: [
+            { path: 'index', title: {i18n: 'international'}, name: 'international_index', component: resolve => { require(['./views/international/international.vue'], resolve); } }
         ]
     },
     {
@@ -123,6 +131,13 @@ export const appRouter = [
                 name: 'draggable-list',
                 title: '可拖拽列表',
                 component: resolve => { require(['./views/my_components/draggable-list/draggable-list.vue'], resolve); }
+            },
+            {
+                path: 'area-linkage',
+                icon: 'ios-more',
+                name: 'area-linkage',
+                title: '城市级联',
+                component: resolve => { require(['./views/my_components/area-linkage/area-linkage.vue'], resolve); }
             },
             {
                 path: 'file-upload',
@@ -173,18 +188,20 @@ export const appRouter = [
         children: [
             { path: 'dragableTable', title: '可拖拽排序', name: 'dragable-table', icon: 'arrow-move', component: resolve => { require(['./views/tables/dragable-table.vue'], resolve); } },
             { path: 'editableTable', title: '可编辑表格', name: 'editable-table', icon: 'edit', component: resolve => { require(['./views/tables/editable-table.vue'], resolve); } },
+            { path: 'searchableTable', title: '可搜索表格', name: 'searchable-table', icon: 'search', component: resolve => { require(['./views/tables/searchable-table.vue'], resolve); } },
             { path: 'exportableTable', title: '表格导出数据', name: 'exportable-table', icon: 'code-download', component: resolve => { require(['./views/tables/exportable-table.vue'], resolve); } },
             { path: 'table2image', title: '表格转图片', name: 'table-to-image', icon: 'images', component: resolve => { require(['./views/tables/table-to-image.vue'], resolve); } }
         ]
     },
     {
-        path: '/argument-page',
+        path: '/advanced-router',
         icon: 'ios-infinite',
-        name: 'argupage',
-        title: '带参页面',
+        name: 'advanced-router',
+        title: '高级路由',
         component: Main,
         children: [
-            { path: 'index', title: '带参页面', name: 'argupage_index', component: resolve => { require(['./views/argument-page/argument-page.vue'], resolve); } }
+            { path: 'mutative-router', title: '动态路由', name: 'mutative-router', icon: 'link', component: resolve => { require(['./views/advanced-router/mutative-router.vue'], resolve); } },
+            { path: 'argument-page', title: '带参页面', name: 'argument-page', icon: 'android-send', component: resolve => { require(['./views/advanced-router/argument-page.vue'], resolve); } }
         ]
     },
     {
@@ -197,28 +214,6 @@ export const appRouter = [
             { path: 'index', title: '错误页面', name: 'errorpage_index', component: resolve => { require(['./views/error_page/error-page.vue'], resolve); } }
         ]
     },
-    {
-        path: '/index',
-        icon: 'android-sad',
-        title: 'demo',
-        name: 'memberManager',
-        component: Main,
-        children: [
-            { path: 'index', title: 'demo', name: 'member_manager_index', component: resolve => { require(['./views/tables/components/multiPageTable.vue'], resolve); } },
-			{ path: 'page', title: 'page', name: 'demo_page', component: resolve => { require(['./views/demo/page.vue'], resolve); } }
-        ]
-    },
-    {
-        path: '/finance',
-        icon: 'android-sad',
-        title: '财务管理',
-        name: 'financeManagement',
-        component: Main,
-        children: [
-            { path: 'rechargeManagement', title: '充值管理', name: 'recharge_management', component: resolve => { require(['./views/finance/rechargeManagement.vue'], resolve); } },
-            { path: 'financialStatistics', title: '财务统计', name: 'financial_statistics', component: resolve => { require(['./views/finance/financialStatistics.vue'], resolve); } }
-        ]
-    },
 	{
         path: '/func',
         icon: 'android-sad',
@@ -226,19 +221,9 @@ export const appRouter = [
         name: 'funcManagement',
         component: Main,
         children: [
-            { path: 'funcManagement', title: '功能管理', name: 'func_management', component: resolve => { require(['./views/func/func.vue'], resolve); } }
+            { path: 'funcManagement', title: '功能管理', name: 'func_management', meta: { unauth: true }, component: resolve => { require(['./views/func/func.vue'], resolve); } }
         ]
-    },
-    {
-        path: '/test1',
-        icon: 'android-sad',
-        title: '测试管理',
-        name: 'test1Management',
-        component: Main,
-        children: [
-            { path: 'test1Management', title: '测试1管理', name: 'test1_management', component: resolve => { require(['./views/attr/test.vue'], resolve); } }
-        ]
-    },
+    }
 ];
 
 // 所有上面定义的路由都要写在下面的routers里
