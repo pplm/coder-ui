@@ -24,8 +24,28 @@
 		</Row>
 	</Form>
 </Card>
+<Modal width="800" v-model="genModal.show" @on-ok="genModal.show = false" title="生成代码">
+<Row>
+<Col>
+    类型：<Select v-model="genModal.type" style="width:200px">
+        <Option value="list-wsh" key="list-wsh">list-wsh</Option>
+        <Option value="detail-wsh" key="detail-wsh">detail-wsh</Option>
+        <Option value="list" key="list">list</Option>
+    </Select>
+    <Button type="primary" :loading="genModal.gening" @click="doGen">
+        <span v-if="!genModal.gening">生成代码</span>
+        <span v-else>生成中...</span>
+    </Button>
+	<Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+</Col>
+<Col>
+代码：<Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="12"></Input>
+    <Spin size="large" fix v-if="genModal.spinShow">生成中...</Spin>
+</Col>
+</Row>
+</Modal>
 <Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
-        <Form :model="saveForm" :label-width="80" >
+        <Form :model="saveForm" :label-width="80">
 		<Row>
 			<Col span="10" style="margin-bottom: -15px;">
 				<FormItem label="标签" prop="label">
@@ -51,10 +71,20 @@
 </Card>
 </div></template>
 <script>
-import util from '@/libs/util';
+import util from '@/libs/util'
+import Clipboard from 'clipboard'
+
 export default {
 	data () {
         return {
+        	genModal: {
+        		show: false,
+        		id: '',
+        		content: '',
+        		type: 'list-wsh',
+        		spinShow: false,
+        		gening: false
+        	},
         	saveModal: {
         		show: false,
         		title: ''
@@ -83,9 +113,24 @@ export default {
                     title: '操作',
                     key: 'action',
                     fixed: 'right',
-                    width: 200,
+                    width: 260,
                     render: (h, params) => {
                       	return h('div', [
+                      		h('Button', {
+                                props: {
+                                    type: 'primary',
+                              		icon: 'document',
+                              		size: 'small'
+                                },
+                                style: {
+          							marginRight: '5px'
+        						},
+                                on: {
+                              		click: () => {
+                              			this.showModalGen(params.row.id)
+                               		}
+                           		}
+                            }, '生成'),
                       		h('Button', {
                                 props: {
                                     type: 'primary',
@@ -152,6 +197,7 @@ export default {
         }
     },
     mounted () {
+    	const clipboard = new Clipboard('.cbbtn');
         this.init()
     },
     methods: {
@@ -170,8 +216,28 @@ export default {
 			}
 			this.doQuery()
     	},
+    	doGen (id) {
+    		this.genModal.content = ''
+    		this.genModal.gening = true
+    		this.genModal.spinShow = true
+    		let _self = this
+    		util.ajax.post('/gen/vue/' + this.genModal.id + '?type=' + this.genModal.type).then(res => {
+    			if (res.status === 200) {
+    				if (res.data.code === '0') {
+    					_self.genModal.content = res.data.data;
+    					_self.genModal.gening = false
+    					_self.genModal.spinShow = false
+    				}
+    			}
+    		}).catch(err => {
+    			_self.genModal.gening = false
+    			_self.genModal.spinShow = false
+    			_self.$Message.error("类型无效")
+    			console.log(err)
+    		})
+    	},
 		doSave () {
-			let _self = this;
+			let _self = this
 			util.ajax.post('/func/save', this.saveForm).then(function (res) {
     			_self.saveModal.show = false
     			_self.$Message.info('操作成功')
@@ -218,7 +284,12 @@ export default {
     			console.log(error)
   			})
 		},
-		showModalAdd() {
+		showModalGen (id) {
+			this.genModal.show = true
+			this.genModal.id = id
+			this.genModal.content = ''
+		},
+		showModalAdd () {
 			this.clearSaveForm()
 			this.saveModal.title = '添加功能'
 			this.saveModal.show = true
