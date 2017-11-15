@@ -38,7 +38,8 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie';
+import Cookies from 'js-cookie'
+import util from '@/libs/util'
 export default {
     data () {
         return {
@@ -58,27 +59,36 @@ export default {
     },
     methods: {
         handleSubmit () {
+            let _self = this
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    Cookies.set('user', this.form.userName);
-                    Cookies.set('password', this.form.password);
-                    Cookies.set('token', require('node-sha1')(this.form.password));
-					this.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg');
-                    if (this.form.userName === 'iview_admin') {
-                        Cookies.set('access', 0);
-                    } else {
-                        Cookies.set('access', 1);
-                    }
-                    this.$router.push({
-                        name: 'home_index'
-                    });
+                    util.ajax.post('/system/login', {
+                        username: this.form.userName,
+                        password: require('node-sha1')(this.form.password)
+                    }).then(res => {
+                        if (res.status === 200) {
+                            if (res.data.code === '0') {
+                                Cookies.set('user', this.form.userName)
+                                Cookies.set('token', res.data.data.token)
+                                _self.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg')
+                                if (_self.form.userName === 'iview_admin') {
+                                    Cookies.set('access', 0)
+                                } else {
+                                    Cookies.set('access', 1)
+                                }
+                                _self.$router.push({
+                                    name: 'home_index'
+                                })
+                            } else {
+                                this.$Message.error('用户名密码错误！')
+                            }
+                        }
+                    }).catch (err => {
+                        console.log(err)
+                    })
                 }
-            });
+            })
         }
     }
-};
+}
 </script>
-
-<style>
-
-</style>

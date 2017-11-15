@@ -315,7 +315,7 @@ const store = new Vuex.Store({
 
 Util.ajax.interceptors.request.use(
     config => {
-		config.headers.token = '2017111500001';
+		config.headers.token = Cookies.get('token');
         return config;
     },
     err => {

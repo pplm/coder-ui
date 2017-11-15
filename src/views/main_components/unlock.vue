@@ -28,6 +28,7 @@
 
 <script>
 import Cookies from 'js-cookie';
+import util from '@/libs/util.js';
 export default {
     name: 'Unlock',
     data () {
@@ -55,15 +56,25 @@ export default {
             this.$refs.inputEle.focus();
         },
         handleUnlock () {
-            if (Cookies.get('password') === this.password) {
-                this.avatorLeft = '0px';
-                this.inputLeft = '400px';
-                this.password = '';
-                this.$store.commit('unlock');
-                this.$emit('on-unlock');
-            } else {
-                this.$Message.error('密码错误,请重新输入。如果忘了密码，清除浏览器缓存重新登录即可，这里没有做后端验证');
-            }
+            let _self = this
+            util.ajax.post('/system/login', {
+                username: Cookies.get('user'),
+                password: require('node-sha1')(this.password)
+            }).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === '0') {
+                        _self.avatorLeft = '0px'
+                        _self.inputLeft = '400px'
+                        _self.password = ''
+                        _self.$store.commit('unlock')
+                        _self.$emit('on-unlock')
+                    } else {
+                        _self.$Message.error('密码错误,请重新输入。如果忘了密码，清除浏览器缓存重新登录即可，这里没有做后端验证')
+                    }
+                }
+            }).catch (err => {
+                console.log(err)
+            })
         },
         unlockMousedown () {
             this.$refs.unlockBtn.className = 'unlock-btn click-unlock-btn';
