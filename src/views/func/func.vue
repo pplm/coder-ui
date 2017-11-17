@@ -31,6 +31,7 @@
         <Option value="list-wsh" key="list-wsh">list-wsh</Option>
         <Option value="detail-wsh" key="detail-wsh">detail-wsh</Option>
         <Option value="list" key="list">list</Option>
+        <Option value="detail" key="detail">detail</Option>
     </Select>
     <Button type="primary" :loading="genModal.gening" @click="doGen">
         <span v-if="!genModal.gening">生成代码</span>
@@ -131,10 +132,10 @@ export default {
                                		}
                            		}
                             }, '生成'),
-                      		h('Button', {
+                            h('Button', {
                                 props: {
                                     type: 'primary',
-                              		icon: 'document',
+                              		icon: 'gear-a',
                               		size: 'small'
                                 },
                                 style: {
@@ -142,13 +143,31 @@ export default {
         						},
                                 on: {
                               		click: () => {
-                              			let args = {
-                              				fid: params.row.id
-                              			}
-                                   		//util.openNewPage(this, 'order_info', argu);
+                                   		this.$router.push({
+                                       		name: 'opt_management',
+                                       		params: {
+                                       			fid: params.row.id
+                                       		}
+                                   		})
+                               		}
+                           		}
+                            }, '操作'),
+                      		h('Button', {
+                                props: {
+                                    type: 'primary',
+                              		icon: 'ios-list-outline',
+                              		size: 'small'
+                                },
+                                style: {
+          							marginRight: '5px'
+        						},
+                                on: {
+                              		click: () => {
                                    		this.$router.push({
                                        		name: 'attr_management',
-                                       		params: args
+                                       		params: {
+                                       			fid: params.row.id
+                                       		}
                                    		})
                                		}
                            		}
