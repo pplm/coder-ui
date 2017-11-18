@@ -264,7 +264,7 @@ export default {
                 _self.saveModal.show = false
                 _self.$Message.info('操作成功')
                 if (_self.saveForm.id === '') {
-                    _self.doQuery()
+                    _self.getList()
                 } else {
                     _self.getList()
                 }
