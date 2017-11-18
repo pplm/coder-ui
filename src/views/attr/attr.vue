@@ -221,16 +221,20 @@ export default {
             dict: {
                 type: [
                     {
-                        label: 'string',
+                        label: '文字（默认）',
                         value: 'string'
                     },
                     {
-                        label: 'datetime',
+                        label: '日期时间',
                         value: 'datetime'
                     },
                     {
-                        label: 'enum',
+                        label: '字典',
                         value: 'enum'
+                    },
+                    {
+                        label: '日期',
+                        value: 'date'
                     }
                 ]
             }

@@ -32,6 +32,7 @@
         <Option value="detail-wsh" key="detail-wsh">detail-wsh</Option>
         <Option value="list" key="list">list</Option>
         <Option value="detail" key="detail">detail</Option>
+        <Option value="router-item" key="router-item">router-item</Option>
     </Select>
     <Button type="primary" :loading="genModal.gening" @click="doGen">
         <span v-if="!genModal.gening">生成代码</span>
