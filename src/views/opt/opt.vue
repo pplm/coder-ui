@@ -232,7 +232,11 @@ export default {
                     },
                     {
                         label: '删除',
-                        value: 'del'
+                        value: 'delete'
+                    },
+                    {
+                        label: '导出',
+                        value: 'export'
                     }
                 ],
                 mode: [
@@ -243,6 +247,22 @@ export default {
                     {
                         label: '页面',
                         value: 'page'
+                    },
+                    {
+                        label: '提示',
+                        value: 'tip'
+                    },
+                    {
+                        label: '开关',
+                        value: 'switch'
+                    },
+                    {
+                        label: '列表',
+                        value: 'list'
+                    },
+                    {
+                        label: 'Excel',
+                        value: 'excel'
                     }
                 ],
             }        
