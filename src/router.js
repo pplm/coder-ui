@@ -62,7 +62,8 @@ export const otherRouter = {
         { path: 'shopping', title: '购物详情', name: 'shopping', component: resolve => { require(['./views/advanced-router/component/shopping-info.vue'], resolve); } },  // 用于展示带参路由
         { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['./views/message/message.vue'], resolve); } },
 		{ path: 'attr/:fid', title: '属性管理', name: 'attr_management', component: resolve => { require(['./views/attr/attr.vue'], resolve); } },
-        { path: 'opt/:fid', title: '操作管理', name: 'opt_management', component: resolve => { require(['./views/opt/opt.vue'], resolve); } }
+        { path: 'opt/:fid', title: '操作管理', name: 'opt_management', component: resolve => { require(['./views/opt/opt.vue'], resolve); } },
+        { path: 'optAttr/:oid/:fid', title: '操作属性管理', name: 'opt_attr_management', component: resolve => { require(['./views/opt/optAttr.vue'], resolve); } }
     ]
 };
 

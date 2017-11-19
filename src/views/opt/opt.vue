@@ -1,6 +1,6 @@
 <template><div>
 <Card>
-    <Form :model="queryForm" :label-width="80">
+    <Form :model="queryForm" :label-width="100">
         <Row>
             <Col span="6" style="margin-bottom: -15px;">
                 <FormItem label="操作" prop="label">
@@ -26,12 +26,12 @@
                     <Input type="text" v-model="queryForm.url"></Input>
                 </FormItem>
             </Col>
-        </Row>        <Row>
-            <Col span="7" style="text-align: center; margin-bottom: -15px;">
+        </Row>
+        <Row>
+            <Col span="24" style="text-align: center; margin-bottom: -15px;">
                 <FormItem>
                     <Button type="primary" icon="android-search" @click="doQuery">查询</Button>
                     <Button type="error" icon="android-refresh" @click="doClear">清空</Button>
-                    <Button type="success" icon="archive">导出</Button>
                 </FormItem>
             </Col>
         </Row>
@@ -154,8 +154,8 @@ export default {
                     fixed: 'right',
                     width: 200,
                     render: (h, params) => {
-                          return h('div', [
-                              h('Button', {
+                        return h('div', [
+                            h('Button', {
                                 props: {
                                     type: 'primary',
                                       icon: 'document',
@@ -165,16 +165,17 @@ export default {
                                       marginRight: '5px'
                                 },
                                 on: {
-                                      click: () => {
-                                         let argu = { order_id: params.row.order_id }
-                                           //util.openNewPage(this, 'order_info', argu);
-                                           this.$router.push({
-                                               name: 'order_info',
-                                               params: argu
-                                           })
-                                       }
-                                   }
-                            }, '详情'),
+                                    click: () => {
+                                        this.$router.push({
+                                            name: 'opt_attr_management',
+                                            params: {
+                                                oid: params.row.id,
+                                                fid: this.fid
+                                            }
+                                        })
+                                    }
+                                }
+                            }, '属性'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -205,7 +206,7 @@ export default {
                                        }
                                    }
                             }, '删除')
-                          ])
+                        ])
                     }
                 }
             ],
@@ -237,6 +238,10 @@ export default {
                     {
                         label: '导出',
                         value: 'export'
+                    },
+                    {
+                        label: '结果列表',
+                        value: 'list'
                     }
                 ],
                 mode: [
@@ -323,18 +328,18 @@ export default {
         },
         getList () {
             let _self = this
-            util.ajax.get('/opt/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(function (res) {
+            util.ajax.get('/opt/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.tableData = res.data.data.content
-                        _self.page.total = res.data.data.totalElements
-                        _self.page.size = res.data.data.size
-                        _self.page.current = res.data.data.number + 1
+                        _self.tableData = res.data.content.content
+                        _self.page.total = res.data.content.totalElements
+                        _self.page.size = res.data.content.size
+                        _self.page.current = res.data.content.number + 1
                     }
                 }
-            }).catch(function (error) {
-                console.log(error)
-              })
+            }).catch(err => {
+                console.log(err)
+            })
         },
         showModalAdd() {
             this.clearSaveForm()
@@ -346,7 +351,7 @@ export default {
             util.ajax.get('/opt/detail?id=' + id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.saveForm = res.data.data
+                        _self.saveForm = res.data.content
                         console.log(_self.saveForm)
                     }
                 }

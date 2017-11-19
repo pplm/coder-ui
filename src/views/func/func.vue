@@ -244,7 +244,7 @@ export default {
     		util.ajax.post('/gen/vue/' + this.genModal.id + '?type=' + this.genModal.type).then(res => {
     			if (res.status === 200) {
     				if (res.data.code === '0') {
-    					_self.genModal.content = res.data.data;
+    					_self.genModal.content = res.data.content;
     					_self.genModal.gening = false
     					_self.genModal.spinShow = false
     				}
@@ -252,7 +252,7 @@ export default {
     		}).catch(err => {
     			_self.genModal.gening = false
     			_self.genModal.spinShow = false
-    			_self.$Message.error("类型无效")
+    			_self.$Message.error(res.data.message)
     			console.log(err)
     		})
     	},
@@ -294,10 +294,10 @@ export default {
 			util.ajax.get('/func/list?page=' + this.page.num + '&size=' + this.page.size).then(function (res) {
 				if (res.status === 200) {
 					if (res.data.code === "0") {
-						_self.tableData = res.data.data.content
-						_self.page.total = res.data.data.totalElements
-						_self.page.size = res.data.data.size
-						_self.page.current = res.data.data.number + 1
+						_self.tableData = res.data.content.content
+						_self.page.total = res.data.content.totalElements
+						_self.page.size = res.data.content.size
+						_self.page.current = res.data.content.number + 1
 					}
 				}
 			}).catch(function (error) {
@@ -319,7 +319,7 @@ export default {
 			util.ajax.get('/func/detail?id=' + id).then(function (res) {
 				if (res.status === 200) {
 					if (res.data.code === "0") {
-						_self.saveForm = res.data.data
+						_self.saveForm = res.data.content
 					}
 				}
 			}).catch(function (error) {

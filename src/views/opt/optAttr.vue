@@ -1,0 +1,205 @@
+<style lang="less">
+    @import '../../styles/common.less';
+</style>
+<template><div>
+<Card>
+    <p slot="title">选择操作属性</p>
+    <Row>
+        <Col span="12">
+            <Card>
+                <p slot="title">功能属性（待选）</p>
+                <Table :columns="columnsListFunc" :data="tableDataFunc" border></Table>
+            </Card>
+        </Col>
+        <Col span="12">
+            <Card>
+                <p slot="title">操作属性（已选）</p>
+                <Table :columns="columnsListOpt" :data="tableDataOpt" border></Table>
+            </Card>
+        </Col>
+    </Row>
+    <Row>
+        <Col span="24" style="text-align: center; margin-top: 10px;">
+            <Button type="primary" icon="android-search" @click="doSave">保存</Button>
+            <Button type="error" icon="android-refresh" @click="goBack">返回</Button>
+        </Col>
+    </Row>
+</Card>
+</div></template>
+<script>
+import util from '@/libs/util';
+export default {
+    data () {
+        return {
+            fid: '',
+            columnsListFunc: [
+                {
+                    title: '标签',
+                    key: 'label',
+                    align: 'center'
+                },
+                {
+                    title: '名字',
+                    key: 'name',
+                    align: 'center'
+                },
+                {
+                    title: '类型',
+                    key: 'type',
+                    align: 'center'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    fixed: 'right',
+                    align: 'center',
+                    width: 80,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    icon: 'arrow-right-a',
+                                    size: 'small'
+                                },
+                                style: {
+                                    paddingLeft: '14px',
+                                    paddingRight: '12px',
+                                },
+                                on: {
+                                    click: () => {
+                                        let attr = this.removeAttr(this.tableDataFunc, params.row.id)[0]
+                                        this.tableDataOpt.push(attr)
+                                    }
+                                }
+                            })
+                        ])
+                    }
+                }
+            ],
+            columnsListOpt: [
+                {
+                    title: '标签',
+                    key: 'label',
+                    align: 'center'
+                },
+                {
+                    title: '名字',
+                    key: 'name',
+                    align: 'center'
+                },
+                {
+                    title: '类型',
+                    key: 'type',
+                    align: 'center'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    fixed: 'left',
+                    align: 'center',
+                    width: 80,
+                    render: (h, params) => {
+                        return h('div', [
+                            h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    icon: 'arrow-left-a',
+                                    size: 'small'
+                                },
+                                style: {
+                                    paddingLeft: '14px',
+                                    paddingRight: '12px',
+                                },
+                                on: {
+                                    click: () => {
+                                        let attr = this.removeAttr(this.tableDataOpt, params.row.id)[0]
+                                        this.tableDataFunc.push(attr)
+                                    }
+                                }
+                            })
+                        ])
+                    }
+                }
+            ],
+            tableDataFunc: [],
+            tableDataOpt: [],
+            dict: {
+                type: [
+                    {
+                        label: '文字（默认）',
+                        value: 'string'
+                    },
+                    {
+                        label: '日期时间',
+                        value: 'datetime'
+                    },
+                    {
+                        label: '字典',
+                        value: 'enum'
+                    },
+                    {
+                        label: '日期',
+                        value: 'date'
+                    }
+                ]
+            }        
+        }
+    },
+    activated () {
+        this.init()
+    },
+    methods: {
+        init () {
+            this.fid = this.$route.params.fid
+            this.oid = this.$route.params.oid
+            this.getAttrs()
+        },
+        getAttrs () {
+            let _self = this
+            util.ajax.get('/opt/attrs?oid=' + this.oid).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === "0") {
+                        _self.tableDataOpt = res.data.content
+                        util.ajax.get('/func/attrs?fid=' + _self.fid).then(res => {
+                            if (res.status === 200) {
+                                if (res.data.code === "0") {
+                                    let attrs = res.data.content
+                                    _self.tableDataFunc = attrs.filter(attrFunc => _self.tableDataOpt.findIndex(attrOpt => attrOpt.id == attrFunc.id) < 0)
+                                }
+                            }
+                        }).catch(err => {
+                            console.log(err)
+                        })
+                    }
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+        },
+        doSave () {
+            let aids = this.tableDataOpt.map(attr => attr.id)
+            let _self = this
+            util.ajax.post('/opt/bindAttr/' + this.oid, aids).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === "0") {
+                        _self.$Message.info("操作成功")
+                        _self.$router.go(-1)
+                    } else {
+                        _self.$Message.error(res.data.message)
+                    }
+                }
+            }).catch(err => {
+                console.log(err)
+            }) 
+        },
+        goBack () {
+            this.$router.go(-1)
+        },
+        removeAttr (attrs, id) {
+            let i = attrs.findIndex(attr => attr.id == id);
+            return attrs.splice(i, 1)
+        }
+    }
+}
+</script>

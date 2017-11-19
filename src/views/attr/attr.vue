@@ -304,10 +304,10 @@ export default {
             util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(function (res) {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.tableData = res.data.data.content
-                        _self.page.total = res.data.data.totalElements
-                        _self.page.size = res.data.data.size
-                        _self.page.current = res.data.data.number + 1
+                        _self.tableData = res.data.content.content
+                        _self.page.total = res.data.content.totalElements
+                        _self.page.size = res.data.content.size
+                        _self.page.current = res.data.content.number + 1
                     }
                 }
             }).catch(function (error) {
@@ -324,7 +324,7 @@ export default {
             util.ajax.get('/attr/detail?id=' + id).then(function (res) {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.saveForm = res.data.data
+                        _self.saveForm = res.data.content
                     }
                 }
             }).catch(function (error) {
