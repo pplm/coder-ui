@@ -69,7 +69,7 @@ export default {
                         if (res.status === 200) {
                             if (res.data.code === '0') {
                                 Cookies.set('user', this.form.userName)
-                                Cookies.set('token', res.data.data.token)
+                                Cookies.set('token', res.data.content.token)
                                 _self.$store.commit('setAvator', 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3448484253,3685836170&fm=27&gp=0.jpg')
                                 if (_self.form.userName === 'iview_admin') {
                                     Cookies.set('access', 0)

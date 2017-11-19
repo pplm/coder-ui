@@ -66,8 +66,13 @@
                 </FormItem>
             </Col>
             <Col span="10" style="margin-bottom: -15px;">
-                <FormItem label="执行url" prop="url">
-                    <Input type="text" v-model="saveForm.url"></Input>
+                <FormItem label="数据准备url" prop="preUrl">
+                    <Input type="text" v-model="saveForm.preUrl"></Input>
+                </FormItem>
+            </Col>
+            <Col span="10" style="margin-bottom: -15px;">
+                <FormItem label="执行url" prop="exeUrl">
+                    <Input type="text" v-model="saveForm.exeUrl"></Input>
                 </FormItem>
             </Col>
         </Row>        </Row>
@@ -98,7 +103,8 @@ export default {
                 name: '',
                 type: '',
                 mode: '',
-                url: ''
+                preUrl: '',
+                exeUrl: ''
             },
             saveForm: {
                 id: '',
@@ -106,7 +112,8 @@ export default {
                 name: '',
                 type: '',
                 mode: '',
-                url: ''
+                preUrl: '',
+                exeUrl: ''
             },
             columnsList:[
                 {
@@ -144,8 +151,13 @@ export default {
                     }
                 },
                 {
+                    title: '数据准备url',
+                    key: 'preUrl',
+                    align: 'center'
+                },
+                {
                     title: '执行url',
-                    key: 'url',
+                    key: 'exeUrl',
                     align: 'center'
                 },
                 {
@@ -220,23 +232,23 @@ export default {
             dict: {
                 type: [
                     {
-                        label: '查询',
+                        label: '查询条件',
                         value: 'query'
                     },
                     {
-                        label: '编辑',
+                        label: '编辑（修改）操作',
                         value: 'update'
                     },
                     {
-                        label: '添加',
+                        label: '添加操作',
                         value: 'add'
                     },
                     {
-                        label: '删除',
+                        label: '删除操作',
                         value: 'delete'
                     },
                     {
-                        label: '导出',
+                        label: '导出操作',
                         value: 'export'
                     },
                     {
@@ -367,7 +379,8 @@ export default {
             this.saveForm.name = ''
             this.saveForm.type = ''
             this.saveForm.mode = ''
-            this.saveForm.url = ''
+            this.saveForm.exeUrl = ''
+            this.saveForm.preUrl = ''
         },
         clearPage () {
             this.page.size = 10

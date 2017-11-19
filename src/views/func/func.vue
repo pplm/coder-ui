@@ -46,17 +46,22 @@
 </Col>
 </Row>
 </Modal>
-<Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
+<Modal width="800" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
         <Form :model="saveForm" :label-width="80">
 		<Row>
-			<Col span="10" style="margin-bottom: -15px;">
+			<Col span="8" style="margin-bottom: -15px;">
 				<FormItem label="标签" prop="label">
 					<Input type="text" v-model="saveForm.label" placeholder="请输入标签"></Input>
 				</FormItem>
 			</Col>
-			<Col span="10" style="margin-bottom: -15px;">
+			<Col span="8" style="margin-bottom: -15px;">
 				<FormItem label="名字" prop="name">
 					<Input type="text" v-model="saveForm.name" placeholder="请输入名字"></Input>
+				</FormItem>
+			</Col>
+			<Col span="8" style="margin-bottom: -15px;">
+				<FormItem label="关联属性" prop="relaAttr">
+					<Input type="text" v-model="saveForm.relaAttr" placeholder="请输入关联属性"></Input>
 				</FormItem>
 			</Col>
 		</Row>
@@ -93,12 +98,14 @@ export default {
         	},
         	queryForm: {
         		label: '',
-        		name: ''
+        		name: '',
+        		relaName: ''
         	},
         	saveForm: {
         		id: '',
         		label: '',
-        		name: ''
+        		name: '',
+        		relaName: ''
         	},
         	columnsList:[
 				{
@@ -109,6 +116,11 @@ export default {
 				{
 					title: '名字',
 					key: 'name',
+					align: 'center'
+				},
+				{
+                    title: '关联属性',
+					key: 'relaAttr',
 					align: 'center'
 				},
 				{
@@ -152,7 +164,7 @@ export default {
                                    		})
                                		}
                            		}
-                            }, '操作'),
+                            }, '操作项'),
                       		h('Button', {
                                 props: {
                                     type: 'primary',
