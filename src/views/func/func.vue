@@ -33,6 +33,7 @@
         <Option value="list" key="list">list</Option>
         <Option value="detail" key="detail">detail</Option>
         <Option value="router-item" key="router-item">router-item</Option>
+        <Option value="save-wsh" key="save-wsh">save-wsh</Option>
     </Select>
     <Button type="primary" :loading="genModal.gening" @click="doGen">
         <span v-if="!genModal.gening">生成代码</span>
@@ -62,6 +63,11 @@
 			<Col span="8" style="margin-bottom: -15px;">
 				<FormItem label="关联属性" prop="relaAttr">
 					<Input type="text" v-model="saveForm.relaAttr" placeholder="请输入关联属性"></Input>
+				</FormItem>
+			</Col>
+			<Col span="8" style="margin-bottom: -15px;">
+				<FormItem label="备注" prop="textarea">
+					<Input type="textarea" v-model="saveForm.remark" placeholder="请输入备注"></Input>
 				</FormItem>
 			</Col>
 		</Row>
@@ -105,7 +111,8 @@ export default {
         		id: '',
         		label: '',
         		name: '',
-        		relaName: ''
+        		relaName: '',
+        		remark: ''
         	},
         	columnsList:[
 				{
@@ -121,6 +128,11 @@ export default {
 				{
                     title: '关联属性',
 					key: 'relaAttr',
+					align: 'center'
+				},
+				{
+                    title: '备注',
+					key: 'remark',
 					align: 'center'
 				},
 				{

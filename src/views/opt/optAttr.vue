@@ -49,6 +49,11 @@ export default {
                     align: 'center'
                 },
                 {
+                    title: '备注',
+                    key: 'remark',
+                    align: 'center'
+                },
+                {
                     title: '操作',
                     key: 'action',
                     fixed: 'right',
@@ -94,6 +99,11 @@ export default {
                     align: 'center'
                 },
                 {
+                    title: '备注',
+                    key: 'remark',
+                    align: 'center'
+                },
+                {
                     title: '操作',
                     key: 'action',
                     fixed: 'left',
@@ -127,20 +137,28 @@ export default {
             dict: {
                 type: [
                     {
-                        label: '文字（默认）',
-                        value: 'string'
+                        label: '文本（默认）',
+                        value: 'text'
                     },
                     {
                         label: '日期时间',
                         value: 'datetime'
                     },
                     {
-                        label: '字典',
+                        label: '枚举（字典）',
                         value: 'enum'
                     },
                     {
                         label: '日期',
                         value: 'date'
+                    },
+                    {
+                        label: '文本域',
+                        value: 'textarea'
+                    },
+                    {
+                        label: '数值',
+                        value: 'number'
                     }
                 ]
             }        

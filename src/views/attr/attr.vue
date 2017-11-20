@@ -44,39 +44,51 @@
         </Row>
     </Form>
 </Card>
-<Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
+<Modal width="900" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
         <Form :model="saveForm" :label-width="80" >
         <Row>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="标签" prop="label">
                     <Input type="text" v-model="saveForm.label" placeholder="请输入标签"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="名字" prop="name">
                     <Input type="text" v-model="saveForm.name" placeholder="请输入名字"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="类型" prop="type">
                     <Select v-model="saveForm.type" clearable placeholder="请选择类型" style="width:174px">
                         <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="长度" prop="length">
                     <Input type="text" v-model="saveForm.length" placeholder="请输入长度"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="精度" prop="precise">
                     <Input type="text" v-model="saveForm.precise" placeholder="请输入精度"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="8" style="margin-bottom: -15px;">
                 <FormItem label="默认值" prop="defaultValue">
                     <Input type="text" v-model="saveForm.defaultValue" placeholder="请输入默认值"></Input>
+                </FormItem>
+            </Col>
+            <Col span="8" style="margin-bottom: -15px;">
+                <FormItem label="备注" prop="remark">
+                    <Input type="textarea" v-model="saveForm.remark" placeholder="请输入备注"></Input>
+                </FormItem>
+            </Col>
+            <Col span="24" style="margin-bottom: -15px;">
+                <FormItem label="操作项" prop="optIds">
+                    <CheckboxGroup v-model="saveForm.optIds">
+                        <Checkbox v-for="opt in saveModal.opts" :key="opt.id" :label="opt.id">{{ opt.label }}</Checkbox>
+                    </CheckboxGroup>
                 </FormItem>
             </Col>
         </Row>
@@ -100,7 +112,8 @@ export default {
             fid: '',
             saveModal: {
                 show: false,
-                title: ''
+                title: '',
+                opts: []
             },
             queryForm: {
                 label: '',
@@ -117,7 +130,10 @@ export default {
                 length: '',
                 precise: '',
                 defaultValue: '',
-                id: ''
+                textarea: '',
+                id: '',
+                optIds: [],
+                opts: []
             },
             columnsList:[
                 {
@@ -133,7 +149,15 @@ export default {
                 {
                     title: '类型',
                     key: 'type',
-                    align: 'center'
+                    width: 200,
+                    align: 'center',
+                    render: (h, params) => {
+                        return this.dict.type.filter(item => {
+                            return params.row.type == item.value
+                        }).map(item => {
+                            return item.label
+                        }) + '【' + params.row.type + '】'
+                    },
                 },
                 {
                     title: '长度',
@@ -148,6 +172,11 @@ export default {
                 {
                     title: '默认值',
                     key: 'defaultValue',
+                    align: 'center'
+                },
+                {
+                    title: '备注',
+                    key: 'remark',
                     align: 'center'
                 },
                 {
@@ -221,20 +250,28 @@ export default {
             dict: {
                 type: [
                     {
-                        label: '文字（默认）',
-                        value: 'string'
+                        label: '文本（默认）',
+                        value: 'text'
                     },
                     {
                         label: '日期时间',
                         value: 'datetime'
                     },
                     {
-                        label: '字典',
+                        label: '枚举（字典）',
                         value: 'enum'
                     },
                     {
                         label: '日期',
                         value: 'date'
+                    },
+                    {
+                        label: '文本域',
+                        value: 'textarea'
+                    },
+                    {
+                        label: '数值',
+                        value: 'number'
                     }
                 ]
             }
@@ -264,7 +301,12 @@ export default {
         },
         doSave () {
             let _self = this;
-            util.ajax.post('/attr/save/' + this.fid, this.saveForm).then(function (res) {
+            this.saveForm.opts = this.saveForm.optIds.map(id => {
+                return {
+                    id: id
+                }
+            })
+            util.ajax.post('/attr/save/' + this.fid, this.saveForm).then(res => {
                 _self.saveModal.show = false
                 _self.$Message.info('操作成功')
                 if (_self.saveForm.id === '') {
@@ -272,9 +314,10 @@ export default {
                 } else {
                     _self.getList()
                 }
-              }).catch(function (err) {
+              }).catch(err => {
                 _self.saveModal.show = false
               })
+
         },
         doDelete (id) {
             let _self = this
@@ -284,7 +327,7 @@ export default {
                 loading: true,
                 onOk: () => {
                     let _modal = this.$Modal
-                    util.ajax.post('/attr/delete/' + id).then(function (res) {
+                    util.ajax.post('/attr/delete/' + id).then(res => {
                         _modal.remove()
                         if (res.status === 200) {
                             if (res.data.code === "0") {
@@ -292,7 +335,7 @@ export default {
                                 _self.getList()
                             }
                         }
-                    }).catch(function (err) {
+                    }).catch(err => {
                         _modal.remove()
                         console.log(err)
                     })
@@ -301,7 +344,7 @@ export default {
         },
         getList () {
             let _self = this
-            util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(function (res) {
+            util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.tableData = res.data.content.content
@@ -310,28 +353,43 @@ export default {
                         _self.page.current = res.data.content.number + 1
                     }
                 }
-            }).catch(function (error) {
-                console.log(error)
+            }).catch(err => {
+                console.log(err)
               })
         },
         showModalAdd() {
+            this.loadOpts()
             this.clearSaveForm()
             this.saveModal.title = '添加功能'
             this.saveModal.show = true
         },
         showModalUpdate(id) {
             let _self = this
-            util.ajax.get('/attr/detail?id=' + id).then(function (res) {
+            util.ajax.get('/attr/detail?id=' + id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.saveForm = res.data.content
+                        _self.loadOpts()
+                        _self.saveForm.optIds = _self.saveForm.opts.map(opt => opt.id)
                     }
                 }
-            }).catch(function (error) {
-                console.log(error)
+            }).catch(err => {
+                console.log(err)
               })
             this.saveModal.show = true
             this.saveModal.title = '修改功能'
+        },
+        loadOpts () {
+            let _self = this
+            util.ajax.get('/opt/listAll?fid=' + this.fid).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === "0") {
+                        _self.saveModal.opts = res.data.content.filter(opt => opt.type == 'add' || opt.type == 'update' || opt.type == 'detail' || opt.type == 'query' || opt.type == 'list' || opt.type == 'save')
+                    }
+                }
+            }).catch(err => {
+                console.log(err)
+            })
         },
         clearSaveForm () {
             this.saveForm.label = ''

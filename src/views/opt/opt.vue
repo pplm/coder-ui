@@ -244,6 +244,10 @@ export default {
                         value: 'add'
                     },
                     {
+                        label: '【研发中】保存操作(添加修改复用)',
+                        value: 'save'
+                    },
+                    {
                         label: '删除操作',
                         value: 'delete'
                     },
@@ -254,6 +258,10 @@ export default {
                     {
                         label: '结果列表',
                         value: 'list'
+                    },
+                    {
+                        label: '详情操作',
+                        value: 'detail'
                     }
                 ],
                 mode: [
