@@ -358,6 +358,7 @@ export default {
               })
         },
         showModalAdd() {
+            this.saveForm.optIds = []
             this.loadOpts()
             this.clearSaveForm()
             this.saveModal.title = '添加功能'
