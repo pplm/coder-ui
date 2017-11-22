@@ -42,10 +42,10 @@
         <FormItem label="字典项" prop="dictItems">
             <Row v-for="(item, index) in optForm.dictAdd.dictItems" :key="index">
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入键" v-model="item.label"></Input>
+                    <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
                 </Col>
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
+                    <Input type="text" placeholder="请输入标签" v-model="item.label"></Input>
                 </Col>
                 <Col span="7">
                     <Button v-if="optForm.dictAdd.dictItems.length > 1" type="primary" size="small" icon="minus" @click="removeDictItemAdd(index)"></Button>
@@ -76,10 +76,10 @@
         <FormItem label="字典项" prop="dictItems">
             <Row v-for="(item, index) in optForm.dictUpdate.dictItems" :key="index">
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入键" v-model="item.label"></Input>
+                    <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
                 </Col>
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
+                    <Input type="text" placeholder="请输入标签" v-model="item.label"></Input>
                 </Col>
                 <Col span="7">
                     <Button v-if="optForm.dictUpdate.dictItems.length > 1" type="primary" size="small" icon="minus" @click="removeDictItemUpdate(index)"></Button>
@@ -165,6 +165,7 @@ export default {
                 {
                     title: '标签',
                     key: 'label',
+                    width: 160,
                     sortable: true,
                     align: 'center'
                 },
@@ -172,7 +173,7 @@ export default {
                     title: '字典项',
                     key: 'dictItems',
                     align: 'center',
-                    render: (h, params) => params.row.dictItems.map(dictItem => dictItem.value + ": " + dictItem.label + " ")
+                    render: (h, params) => params.row.dictItems.map(dictItem => dictItem.value + "：" + dictItem.label + "，")
                 },
                 {
                     title: '备注',
@@ -314,6 +315,16 @@ export default {
               })
         },
         afterDoDictAdd (res) {
+            this.optForm.dictAdd = {
+                label: '',
+                remark: '',
+                dictItems: [
+                    {
+                        label: '',
+                        value: ''
+                    }
+                ]
+            }
             this.getDictList()
         },
         showModalDictAdd () {
