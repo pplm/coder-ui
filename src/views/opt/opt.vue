@@ -38,8 +38,7 @@
     </Form>
 </Card>
 <Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
-        <Form :model="saveForm" :label-width="80" >
-        <Row>
+    <Form :model="saveForm" :label-width="80" >
         <Row>
             <Col span="10" style="margin-bottom: -15px;">
                 <FormItem label="标签" prop="label">
@@ -75,8 +74,19 @@
                     <Input type="text" v-model="saveForm.exeUrl"></Input>
                 </FormItem>
             </Col>
-        </Row>        </Row>
-        </Form>
+        </Row>
+    </Form>
+</Modal>
+<Modal width="900" v-model="genModal.show" @on-ok="genModal.show = false" title="生成代码">
+    <Row>
+        <Col style="margin-bottom: 5px;">
+            <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+        </Col>
+        <Col>
+            <Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="15"></Input>
+            <Spin size="large" fix v-if="genModal.spinShow">生成中...</Spin>
+        </Col>
+    </Row>
 </Modal>
 <Card>
 <Button type="primary" icon="plus" style="margin-bottom: 5px; margin-top: -10px; text-align:right;" @click="showModalAdd">添加</Button>
@@ -97,6 +107,11 @@ export default {
             saveModal: {
                 show: false,
                 title: ''
+            },
+            genModal: {
+                show: false,
+                content: '',
+                spinShow: false,
             },
             queryForm: {
                 label: '',
@@ -119,16 +134,19 @@ export default {
                 {
                     title: '标签',
                     key: 'label',
+                    width: 110,
                     align: 'center'
                 },
                 {
                     title: '名字',
                     key: 'name',
+                    width: 80,
                     align: 'center'
                 },
                 {
                     title: '类型',
                     key: 'type',
+                    width: 110,
                     align: 'center',
                     render: (h, params) => {
                         return this.dict.type.filter(item => {
@@ -141,6 +159,7 @@ export default {
                 {
                     title: '模式',
                     key: 'mode',
+                    width: 80,
                     align: 'center',
                     render: (h, params) => {
                         return this.dict.mode.filter(item => {
@@ -163,10 +182,11 @@ export default {
                 {
                     title: '操作',
                     key: 'action',
+                    align: 'center',
                     fixed: 'right',
-                    width: 200,
+                    width: 250,
                     render: (h, params) => {
-                        return h('div', [
+                        let opts = [
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -218,7 +238,27 @@ export default {
                                        }
                                    }
                             }, '删除')
-                        ])
+                        ]
+                        if (params.row.mode === "page") {
+                            opts.splice(0, 0, h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.doAndShowGenerate({
+                                            id: params.row.id,
+                                            type: params.row.type
+                                        })
+                                    }
+                                }
+                            }, '生成'))
+                        }
+                        return h('div', opts)
                     }
                 }
             ],
@@ -232,35 +272,35 @@ export default {
             dict: {
                 type: [
                     {
-                        label: '查询条件',
+                        label: '查询',
                         value: 'query'
                     },
                     {
-                        label: '编辑（修改）操作',
+                        label: '修改（编辑）',
                         value: 'update'
                     },
                     {
-                        label: '添加操作',
+                        label: '添加',
                         value: 'add'
                     },
                     {
-                        label: '【研发中】保存操作(添加修改复用)',
+                        label: '【研发中】保存',
                         value: 'save'
                     },
                     {
-                        label: '删除操作',
+                        label: '删除',
                         value: 'delete'
                     },
                     {
-                        label: '导出操作',
+                        label: '导出',
                         value: 'export'
                     },
                     {
-                        label: '结果列表',
+                        label: '结果',
                         value: 'list'
                     },
                     {
-                        label: '详情操作',
+                        label: '详情',
                         value: 'detail'
                     }
                 ],
@@ -297,6 +337,26 @@ export default {
         this.init()
     },
     methods: {
+        doAndShowGenerate(obj) {
+            this.genModal.show = true
+            this.genModal.content = ''
+            this.genModal.spinShow = true
+            let _self = this
+            util.ajax.post('/gen/vue/opt/' + obj.type + '/' + obj.id).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === "0") {
+                        _self.genModal.content = res.data.content
+                    } else {
+                        _self.genModal.content = res.data.message
+                    }
+                    _self.genModal.spinShow = false
+                }
+            }).catch(err => {
+                _self.genModal.content = err.message
+                _self.genModal.spinShow = false
+                console.log(err)
+            })
+        },
         init () {
             this.fid = this.$route.params.fid
             this.clearPage()

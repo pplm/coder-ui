@@ -226,7 +226,22 @@ export const appRouter = [
         children: [
             { path: 'funcManagement', title: '功能管理', name: 'func_management', meta: { unauth: true }, component: resolve => { require(['./views/func/func.vue'], resolve); } }
         ]
-    }
+    },
+    {
+        path: '/dict',
+        icon: 'lock-combination',
+        title: '字典',
+        name: 'dict',
+        component: Main,
+        children: [
+            {
+                path: '/dictQuery', 
+                title: '字典信息列表',
+                name: 'dict_query',
+                component: resolve => { require(['@/views/dict/dictQuery.vue'], resolve); } 
+            },
+        ]
+    },
 ];
 
 // 所有上面定义的路由都要写在下面的routers里

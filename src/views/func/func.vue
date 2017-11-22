@@ -24,28 +24,26 @@
 		</Row>
 	</Form>
 </Card>
-<Modal width="800" v-model="genModal.show" @on-ok="genModal.show = false" title="生成代码">
-<Row>
-<Col>
-    类型：<Select v-model="genModal.type" style="width:200px">
-        <Option value="list-wsh" key="list-wsh">list-wsh</Option>
-        <Option value="detail-wsh" key="detail-wsh">detail-wsh</Option>
-        <Option value="list" key="list">list</Option>
-        <Option value="detail" key="detail">detail</Option>
-        <Option value="router-item" key="router-item">router-item</Option>
-        <Option value="save-wsh" key="save-wsh">save-wsh</Option>
-    </Select>
-    <Button type="primary" :loading="genModal.gening" @click="doGen">
-        <span v-if="!genModal.gening">生成代码</span>
-        <span v-else>生成中...</span>
-    </Button>
-	<Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
-</Col>
-<Col>
-代码：<Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="12"></Input>
-    <Spin size="large" fix v-if="genModal.spinShow">生成中...</Spin>
-</Col>
-</Row>
+<Modal width="900" v-model="genModal.show" @on-ok="genModal.show = false" title="生成代码">
+    <Row>
+        <Col style="margin-bottom: 5px;">
+      类型：<Select v-model="genModal.type" style="width:200px">
+                <Option value="list-wsh" key="list-wsh">list-wsh</Option>
+                <Option value="list" key="list">list</Option>
+                <Option value="detail" key="detail">detail</Option>
+                <Option value="router-item" key="router-item">router-item</Option>
+            </Select>
+            <Button type="primary" :loading="genModal.gening" @click="doGen">
+                <span v-if="!genModal.gening">生成代码</span>
+                <span v-else>生成中...</span>
+            </Button>
+	        <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+        </Col>
+        <Col>
+            <Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="15"></Input>
+            <Spin size="large" fix v-if="genModal.spinShow">生成中...</Spin>
+        </Col>
+    </Row>
 </Modal>
 <Modal width="800" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
         <Form :model="saveForm" :label-width="80">
@@ -86,7 +84,6 @@
 <script>
 import util from '@/libs/util'
 import Clipboard from 'clipboard'
-
 export default {
 	data () {
         return {

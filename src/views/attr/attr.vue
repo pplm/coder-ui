@@ -272,6 +272,10 @@ export default {
                     {
                         label: '数值',
                         value: 'number'
+                    },
+                    {
+                        label: '密码',
+                        value: 'password'
                     }
                 ]
             }
