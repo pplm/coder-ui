@@ -63,7 +63,12 @@
 					<Input type="text" v-model="saveForm.relaAttr" placeholder="请输入关联属性"></Input>
 				</FormItem>
 			</Col>
-			<Col span="8" style="margin-bottom: -15px;">
+      <Col span="8" style="margin-bottom: -15px;">
+        <FormItem label="权限值" prop="permissionTag">
+          <Input type="text" v-model="saveForm.permissionTag" placeholder="请输入权限值"></Input>
+        </FormItem>
+      </Col>
+			<Col span="12" style="margin-bottom: -15px;">
 				<FormItem label="备注" prop="textarea">
 					<Input type="textarea" v-model="saveForm.remark" placeholder="请输入备注"></Input>
 				</FormItem>
@@ -109,6 +114,7 @@ export default {
         		label: '',
         		name: '',
         		relaName: '',
+            permissionTag: '',
         		remark: ''
         	},
         	columnsList:[
@@ -123,12 +129,17 @@ export default {
 					align: 'center'
 				},
 				{
-                    title: '关联属性',
+          title: '关联属性',
 					key: 'relaAttr',
 					align: 'center'
 				},
+        {
+          title: '权限值',
+          key: 'permissionTag',
+          align: 'center'
+        },
 				{
-                    title: '备注',
+          title: '备注',
 					key: 'remark',
 					align: 'center'
 				},
@@ -352,8 +363,10 @@ export default {
 		clearSaveForm () {
     		this.saveForm = {
     			id: '',
-				label: '',
-			    name: ''
+				  label: '',
+			    name: '',
+          permissionTag: '',
+          remark: ''
 			}
     	},
     	clearPage () {

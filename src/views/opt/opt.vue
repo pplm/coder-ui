@@ -2,26 +2,26 @@
 <Card>
     <Form :model="queryForm" :label-width="100">
         <Row>
-            <Col span="6" style="margin-bottom: -15px;">
+            <Col span="6">
                 <FormItem label="操作" prop="label">
                     <Input type="text" v-model="queryForm.label"></Input>
                 </FormItem>
             </Col>
-            <Col span="6" style="margin-bottom: -15px;">
+            <Col span="6">
                 <FormItem label="类型" prop="type">
                     <Select v-model="queryForm.type" clearable placeholder="请选择类型" style="width:174px">
                         <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
-            <Col span="6" style="margin-bottom: -15px;">
+            <Col span="6">
                 <FormItem label="模式" prop="mode">
                     <Select v-model="queryForm.mode" clearable placeholder="请选择模式" style="width:174px">
                         <Option v-for="item in dict.mode" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
-            <Col span="6" style="margin-bottom: -15px;">
+            <Col span="6">
                 <FormItem label="执行url" prop="url">
                     <Input type="text" v-model="queryForm.url"></Input>
                 </FormItem>
@@ -40,40 +40,47 @@
 <Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
     <Form :model="saveForm" :label-width="80" >
         <Row>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="标签" prop="label">
                     <Input type="text" v-model="saveForm.label"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="名字" prop="name">
                     <Input type="text" v-model="saveForm.name"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="类型" prop="type">
                     <Select v-model="saveForm.type" clearable placeholder="请选择类型" style="width:174px">
                         <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="模式" prop="mode">
                     <Select v-model="saveForm.mode" clearable placeholder="请选择模式" style="width:174px">
                         <Option v-for="item in dict.mode" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="数据准备url" prop="preUrl">
                     <Input type="text" v-model="saveForm.preUrl"></Input>
                 </FormItem>
             </Col>
-            <Col span="10" style="margin-bottom: -15px;">
+            <Col span="10">
                 <FormItem label="执行url" prop="exeUrl">
                     <Input type="text" v-model="saveForm.exeUrl"></Input>
                 </FormItem>
             </Col>
+        </Row>
+        <Row>
+            <FormItem label="权限值" prop="permissionTag">
+                <Col span="10">
+                    <Input type="text" v-model="saveForm.permissionTag"></Input>
+                </Col>
+            </FormItem>
         </Row>
     </Form>
 </Modal>
@@ -128,7 +135,8 @@ export default {
                 type: '',
                 mode: '',
                 preUrl: '',
-                exeUrl: ''
+                exeUrl: '',
+                permissionTag: ''
             },
             columnsList:[
                 {
@@ -177,6 +185,11 @@ export default {
                 {
                     title: '执行url',
                     key: 'exeUrl',
+                    align: 'center'
+                },
+                {
+                    title: '权限值',
+                    key: 'permissionTag',
                     align: 'center'
                 },
                 {
@@ -374,6 +387,7 @@ export default {
             this.doQuery()
         },
         doSave () {
+            console.log(this.saveForm)
             let _self = this;
             util.ajax.post('/opt/save/' + this.fid, this.saveForm).then(function (res) {
                 _self.saveModal.show = false
@@ -432,7 +446,6 @@ export default {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.saveForm = res.data.content
-                        console.log(_self.saveForm)
                     }
                 }
             }).catch(err => {
@@ -449,6 +462,7 @@ export default {
             this.saveForm.mode = ''
             this.saveForm.exeUrl = ''
             this.saveForm.preUrl = ''
+            this.saveForm.permissionTag = ''
         },
         clearPage () {
             this.page.size = 10
