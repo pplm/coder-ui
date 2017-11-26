@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie'
-import util from '@/libs/util'
+import Cookies from 'js-cookie';
+import util from '@/libs/util.js';
+
 export default {
     data () {
         return {
@@ -66,6 +67,7 @@ export default {
                         username: this.form.userName,
                         password: require('node-sha1')(this.form.password)
                     }).then(res => {
+                        console.log(res)
                         if (res.status === 200) {
                             if (res.data.code === '0') {
                                 Cookies.set('user', this.form.userName)
@@ -87,8 +89,12 @@ export default {
                         console.log(err)
                     })
                 }
-            })
+            });
         }
     }
-}
+};
 </script>
+
+<style>
+
+</style>

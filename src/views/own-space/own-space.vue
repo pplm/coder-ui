@@ -78,7 +78,7 @@
 
 <script>
 export default {
-    name: 'own-space',
+    name: 'ownspace_index',
     data () {
         const validePhone = (rule, value, callback) => {
             var re = /^1[0-9]{10}$/;
@@ -174,12 +174,12 @@ export default {
         },
         cancelEditUserInfor () {
             this.$store.commit('removeTag', 'ownspace_index');
-            localStorage.pageOpenedList = JSON.stringify(this.$store.state.pageOpenedList);
+            localStorage.pageOpenedList = JSON.stringify(this.$store.state.app.pageOpenedList);
             let lastPageName = '';
-            if (this.$store.state.pageOpenedList.length > 1) {
-                lastPageName = this.$store.state.pageOpenedList[1].name;
+            if (this.$store.state.app.pageOpenedList.length > 1) {
+                lastPageName = this.$store.state.app.pageOpenedList[1].name;
             } else {
-                lastPageName = this.$store.state.pageOpenedList[0].name;
+                lastPageName = this.$store.state.app.pageOpenedList[0].name;
             }
             this.$router.push({
                 name: lastPageName

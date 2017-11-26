@@ -1,11 +1,13 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const merge = require('webpack-merge');
 const webpackBaseConfig = require('./webpack.base.config.js');
 const fs = require('fs');
+const package = require('../package.json');
 
-fs.open('./src/config/env.js', 'w', function(err, fd) {
+fs.open('./build/env.js', 'w', function(err, fd) {
     const buf = 'export default "development";';
     fs.write(fd, buf, 0, buf.length, 0, function(err, written, buffer) {});
 });
@@ -23,16 +25,29 @@ module.exports = merge(webpackBaseConfig, {
             allChunks: true
         }),
         new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendors',
-            filename: 'vendors.js'
+            name: ['vender-exten', 'vender-base'],
+            minChunks: Infinity
         }),
         new HtmlWebpackPlugin({
+            title: 'iView admin v' + package.version,
             filename: '../index.html',
             template: './src/template/index.ejs',
             inject: false
+        }),
+        new CopyWebpackPlugin([
+            {
+                from: 'src/views/main-components/theme-switch/theme'
+            },
+            {
+                from: 'src/views/my-components/text-editor/tinymce'
+            }
+        ], {
+            ignore: [
+                'text-editor.vue'
+            ]
         })
     ],
-	devServer: {
+    devServer: {
         historyApiFallback: true,
         hot: true,
         inline: true,
@@ -41,7 +56,7 @@ module.exports = merge(webpackBaseConfig, {
             //匹配代理的url
             '/api': {
             // 目标服务器地址
-              target: 'http://47.95.213.130:8880',
+              target: 'http://localhost:8880',
               //路径重写
               pathRewrite: {'^/api' : '/v1'},
               changeOrigin: true
