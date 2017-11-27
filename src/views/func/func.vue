@@ -78,7 +78,7 @@
 </Modal>
 <Card>
 <Button type="primary" icon="plus" style="margin-bottom: 5px; margin-top: -10px; text-align:right;" @click="showModalAdd">添加</Button>
-	<Table :columns="columnsList" :data="tableData" border></Table>
+	<Table :columns="columns" :data="tableData" border></Table>
 	<div style="text-align: right; padding-top: 10px;">
 	    <Page :total="page.total" :current="page.current" :page-size="page.size" show-total show-elevator @on-change="changePage">
 			总计 {{page.total}} 条
@@ -117,7 +117,7 @@ export default {
             permissionTag: '',
         		remark: ''
         	},
-        	columnsList:[
+        	columns:[
 				{
 					title: '标签',
 					key: 'label',
@@ -244,13 +244,14 @@ export default {
         		total: 0,
         		size: 10,
         		current: 1,
-        		num: 0
         	}
         }
     },
     mounted () {
-    	const clipboard = new Clipboard('.cbbtn');
-        this.init()
+      console.log("11111")
+    	const clipboard = new Clipboard('.cbbtn')
+      console.log("22222")
+      this.init()
     },
     methods: {
     	init () {
@@ -323,7 +324,7 @@ export default {
 		},
 		getList () {
 			let _self = this
-			util.ajax.get('/func/list?page=' + this.page.num + '&size=' + this.page.size).then(function (res) {
+			util.ajax.get('/func/list?page=' + (this.page.current - 1) + '&size=' + this.page.size).then(function (res) {
 				if (res.status === 200) {
 					if (res.data.code === "0") {
 						_self.tableData = res.data.content.content
@@ -373,7 +374,7 @@ export default {
     		this.page.current = 1
     	},
 		changePage (number) {
-			this.page.num = number - 1
+			this.page.current = number
 			this.getList()
 		}
 	}

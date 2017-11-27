@@ -3,7 +3,7 @@ import iView from 'iview';
 import Util from '../libs/util';
 import VueRouter from 'vue-router';
 import Cookies from 'js-cookie';
-import {routers, otherRouter, appRouter} from './router';
+import {routers, otherRouter, appRouter, loginRouter, page500} from './router';
 
 Vue.use(VueRouter);
 
@@ -78,9 +78,11 @@ Util.ajax.interceptors.response.use(
                 case 401:
                     Cookies.remove('user');
                     Cookies.remove('token');
-                    router.replace(loginRouter)
+                    router.replace(loginRouter);
+                default:
+                    router.replace(page500);
             }
         }
-        return Promise.reject(err.response.data)
+        return Promise.reject(err);
     }
 );

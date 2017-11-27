@@ -107,6 +107,7 @@
 </div></template>
 <script>
 import util from '@/libs/util';
+import Clipboard from 'clipboard';
 export default {
     data () {
         return {
@@ -346,7 +347,8 @@ export default {
             }        
         }
     },
-    activated () {
+    mounted () {
+        const clipboard = new Clipboard('.cbbtn')
         this.init()
     },
     methods: {
