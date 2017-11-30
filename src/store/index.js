@@ -11,6 +11,11 @@ const store = new Vuex.Store({
     state: {
         dontCache: ['text-editor', 'artical-publish']  // 在这里定义你不想要缓存的页面的name属性值(参见路由配置router.js)
     },
+    getters: {
+        hasPermission: (state, getters) => tag => {
+            return true;
+        }
+    },
     mutations: {
         increateTag (state, tagObj) {
             if (!Util.oneOf(tagObj.name, state.dontCache)) {

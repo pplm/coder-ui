@@ -27,10 +27,12 @@
 <Modal width="900" v-model="genModal.show" @on-ok="genModal.show = false" title="生成代码">
     <Row>
         <Col style="margin-bottom: 5px;">
+      项目：<Select v-model="genModal.project" style="width:200px">
+                <Option value="code-ui" key="code-ui">code-ui</Option>
+                <Option value="wsh" key="wsh">微生活</Option>
+            </Select>
       类型：<Select v-model="genModal.type" style="width:200px">
-                <Option value="list-wsh" key="list-wsh">list-wsh</Option>
                 <Option value="list" key="list">list</Option>
-                <Option value="detail" key="detail">detail</Option>
                 <Option value="router-item" key="router-item">router-item</Option>
             </Select>
             <Button type="primary" :loading="genModal.gening" @click="doGen">
@@ -96,7 +98,8 @@ export default {
         		show: false,
         		id: '',
         		content: '',
-        		type: 'list-wsh',
+        		type: 'list',
+            project: 'wsh',
         		spinShow: false,
         		gening: false
         	},
@@ -248,9 +251,10 @@ export default {
         }
     },
     mounted () {
-      console.log("11111")
     	const clipboard = new Clipboard('.cbbtn')
-      console.log("22222")
+      this.init()
+    },
+    activated () {
       this.init()
     },
     methods: {
@@ -274,7 +278,7 @@ export default {
     		this.genModal.gening = true
     		this.genModal.spinShow = true
     		let _self = this
-    		util.ajax.post('/gen/vue/' + this.genModal.id + '?type=' + this.genModal.type).then(res => {
+    		util.ajax.post('/gen/vue/' + this.genModal.id + '?type=' + this.genModal.type + '&project=' + this.genModal.project).then(res => {
     			if (res.status === 200) {
     				if (res.data.code === '0') {
     					_self.genModal.content = res.data.content;
@@ -307,13 +311,14 @@ export default {
 				loading: true,
 				onOk: () => {
 					let _modal = this.$Modal
-					util.ajax.post('/func/delete/' + id).then(function (res) {
+					util.ajax.post('/func/delete?id=' + id).then(function (res) {
 						_modal.remove()
+            console.log(res)
 						if (res.status === 200) {
 							if (res.data.code === "0") {
-								_self.$Message.info('操作成功')
 								_self.getList()
 							}
+              _self.$Message.info(res.data.message)
 						}
 					}).catch(function (err) {
 						_modal.remove()

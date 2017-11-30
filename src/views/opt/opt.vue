@@ -290,7 +290,7 @@ export default {
                         value: 'query'
                     },
                     {
-                        label: '修改（编辑）',
+                        label: '修改',
                         value: 'update'
                     },
                     {
@@ -298,7 +298,7 @@ export default {
                         value: 'add'
                     },
                     {
-                        label: '【研发中】保存',
+                        label: '添加修改(合并)',
                         value: 'save'
                     },
                     {
@@ -351,6 +351,9 @@ export default {
         const clipboard = new Clipboard('.cbbtn')
         this.init()
     },
+    activated () {
+        this.init()
+    },
     methods: {
         doAndShowGenerate(obj) {
             this.genModal.show = true
@@ -391,7 +394,7 @@ export default {
         doSave () {
             console.log(this.saveForm)
             let _self = this;
-            util.ajax.post('/opt/save/' + this.fid, this.saveForm).then(function (res) {
+            util.ajax.post('/opt/save?fid=' + this.fid, this.saveForm).then(function (res) {
                 _self.saveModal.show = false
                 _self.$Message.info('操作成功')
                 _self.doQuery()
@@ -407,13 +410,13 @@ export default {
                 loading: true,
                 onOk: () => {
                     let _modal = this.$Modal
-                    util.ajax.post('/opt/delete/' + id).then(function (res) {
+                    util.ajax.post('/opt/delete?id=' + id).then(function (res) {
                         _modal.remove()
                         if (res.status === 200) {
                             if (res.data.code === "0") {
-                                _self.$Message.info('操作成功')
                                 _self.getList()
                             }
+                            _self.$Message.info(res.data.message)
                         }
                     }).catch(function (err) {
                         _modal.remove()
@@ -425,6 +428,7 @@ export default {
         getList () {
             let _self = this
             util.ajax.get('/opt/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
+                console.log(res)
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.tableData = res.data.content.content

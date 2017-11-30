@@ -62,7 +62,13 @@ export const otherRouter = {
         { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['@/views/message/message.vue'], resolve); } },
         { path: 'attr/:fid', title: '属性管理', name: 'attr_management', component: resolve => { require(['@/views/attr/attr.vue'], resolve); } },
         { path: 'opt/:fid', title: '操作管理', name: 'opt_management', component: resolve => { require(['@/views/opt/opt.vue'], resolve); } },
-        { path: 'optAttr/:oid/:fid', title: '操作属性管理', name: 'opt_attr_management', component: resolve => { require(['@/views/opt/optAttr.vue'], resolve); } }
+        { path: 'optAttr/:oid/:fid', title: '操作属性管理', name: 'opt_attr_management', component: resolve => { require(['@/views/opt/optAttr.vue'], resolve); } },
+        {
+            path: 'funcQuery/:id',
+            title: '功能管理',
+            name: 'func_query', 
+            component: resolve => require(['@/views/func/funcQuery.vue'], resolve)
+        },
     ]
 };
 
@@ -241,10 +247,25 @@ export const appRouter = [
         component: Main,
         children: [
             {
-                path: '/dictQuery', 
+                path: '/dictQuery1', 
                 title: '字典信息列表',
-                name: 'dict_query',
-                component: resolve => { require(['@/views/dict/dictQuery.vue'], resolve); } 
+                name: 'dict_query1',
+                component: resolve => { require(['@/views/dict/dictQuery1.vue'], resolve); } 
+            },
+        ]
+    },
+    {
+        path: '/project',
+        icon: 'lock-combination',
+        title: '项目管理',
+        name: 'project',
+        component: Main,
+        children: [
+            {
+                path: '/projectQuery', 
+                title: '项目信息列表',
+                name: 'project_query',
+                component: resolve => { require(['@/views/project/projectQuery.vue'], resolve); } 
             },
         ]
     },
