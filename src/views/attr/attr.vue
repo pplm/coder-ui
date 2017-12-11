@@ -38,14 +38,14 @@
                 <FormItem>
                     <Button type="primary" icon="android-search" @click="doQuery">查询</Button>
                     <Button type="error" icon="android-refresh" @click="doClear">清空</Button>
-                    <Button type="success" icon="archive">导出</Button>
+                    <Button type="error" icon="android-refresh" @click="$router.go(-1)">返回</Button>
                 </FormItem>
             </Col>
         </Row>
     </Form>
 </Card>
-<Modal width="900" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
-        <Form :model="saveForm" :label-width="80" >
+<Modal width="1000" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
+        <Form :model="saveForm" :label-width="100" >
         <Row>
             <Col span="8">
                 <FormItem label="标签" prop="label">
@@ -68,14 +68,14 @@
         </Row>
         <Row>
             <Col span="8">
-                <FormItem label="类型" prop="type">
+                <FormItem label="页面控件类型" prop="type">
                     <Select v-model="saveForm.type" clearable placeholder="请选择类型">
                         <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
             </Col>
             <Col span="16">
-                <FormItem label="字典" v-if="saveForm.type == 'enum'" prop="dict.id">
+                <FormItem label="字典" v-if="saveForm.type == 'enum' || saveForm.type == 'select' || saveForm.type == 'radio'" prop="dict.id">
                     <Select v-model="saveForm.dict.id" clearable placeholder="请选择字典">
                         <Option v-for="item in dict.dict" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
@@ -156,6 +156,7 @@ export default {
                 defaultValue: '',
                 textarea: '',
                 id: '',
+                remark: '',
                 optIds: [],
                 opts: [],
                 dict: {
@@ -166,6 +167,7 @@ export default {
                 {
                     title: '标签',
                     key: 'label',
+                    width: 120,
                     align: 'center'
                 },
                 {
@@ -174,7 +176,7 @@ export default {
                     align: 'center'
                 },
                 {
-                    title: '类型',
+                    title: '页面控件类型',
                     key: 'type',
                     width: 200,
                     align: 'center',
@@ -187,14 +189,13 @@ export default {
                     },
                 },
                 {
-                    title: '长度',
-                    key: 'length',
-                    align: 'center'
-                },
-                {
-                    title: '精度',
-                    key: 'precise',
-                    align: 'center'
+                    title: '必填',
+                    key: 'required',
+                    width: 70,
+                    align: 'center',
+                    render: (h, params) => {
+                        return this.dict.required.filter(item => params.row.required == item.value).map(item => item.label);
+                    },
                 },
                 {
                     title: '默认值',
@@ -285,10 +286,6 @@ export default {
                         value: 'datetime'
                     },
                     {
-                        label: '枚举（字典）',
-                        value: 'enum'
-                    },
-                    {
                         label: '日期',
                         value: 'date'
                     },
@@ -303,7 +300,33 @@ export default {
                     {
                         label: '密码',
                         value: 'password'
+                    },
+                    {
+                        label: '图片上传【单图】',
+                        value: 'pic'
+                    },
+                    {
+                        label: '图片上传【多图】',
+                        value: 'pics'
+                    },
+                    {
+                        label: '列表框（选择器）',
+                        value: 'select'
+                    },
+                    {
+                        label: '单选框',
+                        value: 'radio'
                     }
+                ],
+                required: [
+                    {
+                        label: '否',
+                        value: '0'
+                    },
+                    {
+                        label: '是',
+                        value: '1'
+                    }                    
                 ],
                 dict: [],
             }
@@ -416,7 +439,7 @@ export default {
                 length: this.saveForm.length,
                 precise: this.saveForm.precise,
                 defaultValue: this.saveForm.defaultValue,
-                remark: this.remark,
+                remark: this.saveForm.remark,
                 dict: this.saveForm.dict,
             }
             form.opts = this.saveForm.optIds.map(id => {
@@ -485,6 +508,7 @@ export default {
             this.saveForm.optIds = []
             this.saveForm.opts = []
             this.saveForm.dict.id = ''
+            this.saveForm.remark = ''
         },
         clearPage () {
             this.page.size = 10

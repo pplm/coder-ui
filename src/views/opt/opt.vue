@@ -32,6 +32,7 @@
                 <FormItem>
                     <Button type="primary" icon="android-search" @click="doQuery">查询</Button>
                     <Button type="error" icon="android-refresh" @click="doClear">清空</Button>
+                    <Button type="error" icon="android-refresh" @click="$router.go(-1)">返回</Button>
                 </FormItem>
             </Col>
         </Row>

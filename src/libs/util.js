@@ -22,6 +22,16 @@ util.ajax = axios.create({
     timeout: 30000
 });
 
+util.clearArray = arr => {
+    if (Array.isArray(arr)) {
+        arr.splice(0, arr.length);
+    }
+};
+
+util.removeArray = (arr, e) => {
+    arr.splice(arr.indexOf(e), 1);
+};
+
 util.inOf = function (arr, targetArr) {
     let res = true;
     arr.map(item => {

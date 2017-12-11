@@ -295,6 +295,7 @@ export default {
     	},
 		doSave () {
 			let _self = this
+      console.log(this.saveForm)
 			util.ajax.post('/func/save', this.saveForm).then(function (res) {
     			_self.saveModal.show = false
     			_self.$Message.info('操作成功')
