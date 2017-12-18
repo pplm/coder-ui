@@ -49,9 +49,8 @@ module.exports = merge(webpackBaseConfig, {
     ],
     devServer: {
         historyApiFallback: true,
-        hot: true,
-        inline: true,
         stats: { colors: true },
+        host: "0.0.0.0",
         proxy: {
             //匹配代理的url
             '/api': {
@@ -61,6 +60,6 @@ module.exports = merge(webpackBaseConfig, {
               pathRewrite: {'^/api' : '/v1'},
               changeOrigin: true
             }
-         }
+        }
     }
 });

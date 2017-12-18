@@ -109,7 +109,7 @@
         <Row>
             <Col span="24">
                 <FormItem label="操作项" prop="optIds">
-                    <CheckboxGroup v-model="saveForm.optIds">
+                    <CheckboxGroup v-model="saveForm.optIds" @on-change="show">
                         <Checkbox v-for="opt in saveModal.opts" :key="opt.id" :label="opt.id">{{ opt.label }}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
@@ -332,7 +332,7 @@ export default {
             }
         }
     },
-    activated () {
+    mounted () {
         this.init()
         this.loadOpts()
         this.getDict()
@@ -386,6 +386,9 @@ export default {
               })
 
         },
+        show() {
+            console.log(this.saveForm.optIds)
+        },
         doDelete (id) {
             let _self = this
             this.$Modal.confirm({
@@ -414,6 +417,7 @@ export default {
             util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
+                        console.log(res.data.content.content);
                         _self.tableData = res.data.content.content
                         _self.page.total = res.data.content.totalElements
                         _self.page.size = res.data.content.size
@@ -448,6 +452,7 @@ export default {
                 }
             });
             form.required = this.saveForm.required === true ? "1" : "0";
+            console.log(form);
             return form;
         },
         prepareSaveForm(form) {

@@ -40,6 +40,18 @@
         <Form :model="optForm.funcSave" :label-width="100">
             <Row>
                 <Col span="11">
+                    <FormItem label="功能标签" prop="label">
+                        <Input type="text" v-model="optForm.funcSave.label"></Input>
+                    </FormItem>
+                </Col>
+                <Col span="11">
+                    <FormItem label="功能名称" prop="name">
+                        <Input type="text" v-model="optForm.funcSave.name"></Input>
+                    </FormItem>
+                </Col>
+            </Row>
+            <Row>
+                <Col span="11">
                     <FormItem label="关联属性" prop="relaAttr">
                         <Input type="text" v-model="optForm.funcSave.relaAttr"></Input>
                     </FormItem>
@@ -51,23 +63,12 @@
                 </Col>
             </Row>
             <Row>
-                <Col span="11">
+                <Col span="20">
                     <FormItem label="备注" prop="remark">
                         <Input type="textarea" v-model="optForm.funcSave.remark"></Input>
                     </FormItem>
                 </Col>
-                <Col span="11">
-                    <FormItem label="功能标签" prop="label">
-                        <Input type="text" v-model="optForm.funcSave.label"></Input>
-                    </FormItem>
-                </Col>
-            </Row>
-            <Row>
-                <Col span="11">
-                    <FormItem label="功能名称" prop="name">
-                        <Input type="text" v-model="optForm.funcSave.name"></Input>
-                    </FormItem>
-                </Col>
+
             </Row>
         </Form>
         <Spin size="large" fix v-if="optModal.funcSave.loading">
@@ -91,6 +92,20 @@ export default {
             },
             columns: [
                 {
+                    title: '功能标签',
+                    key: 'label',
+                    width: 150,
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    title: '功能名称',
+                    key: 'name',
+                    width: 150,
+                    sortable: true,
+                    align: 'center'
+                },
+                {
                     title: '关联属性',
                     key: 'relaAttr',
                     width: 150,
@@ -107,21 +122,6 @@ export default {
                 {
                     title: '备注',
                     key: 'remark',
-                    width: 150,
-                    sortable: true,
-                    align: 'center'
-                },
-                {
-                    title: '功能标签',
-                    key: 'label',
-                    width: 150,
-                    sortable: true,
-                    align: 'center'
-                },
-                {
-                    title: '功能名称',
-                    key: 'name',
-                    width: 150,
                     sortable: true,
                     align: 'center'
                 },
@@ -159,11 +159,12 @@ export default {
         }
     },
     activated () {
+
+    },
+    mounted () {
         this.optForm.pid = this.$route.params.id
         this.page.current = 1;
         this.getTableData();
-    },
-    mounted () {
         this.init();
     },
     methods: {
@@ -337,12 +338,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goAttrDetail(params.row.id);
+                                    this.goFuncSave(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '属性'
+                    label: '修改'
                 },
                 {
                     widget: 'Button',
@@ -379,12 +380,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goFuncSave(params.row.id);
+                                    this.goAttrDetail(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '修改'
+                    label: '属性'
                 },
                 {
                     widget: 'Button',

@@ -1,5 +1,7 @@
 <style lang="less">
     @import '../../styles/common.less';
+    @import '../tables/components/table.less';
+</style>
 </style>
 <template><div>
 <Card>
@@ -14,7 +16,7 @@
         <Col span="12">
             <Card>
                 <p slot="title">操作属性（已选）</p>
-                <Table :columns="columnsListOpt" :data="tableDataOpt" border></Table>
+                <DragableTable refs="tableOpt" :columnsList="columnsListOpt" v-model="tableDataOpt" border @on-start="onStartSortTableOpt" @on-end="onEndSortTableOpt"></DragableTable>
             </Card>
         </Col>
     </Row>
@@ -28,7 +30,12 @@
 </div></template>
 <script>
 import util from '@/libs/util';
+import DragableTable from '../tables/components/dragableTable.vue';
+
 export default {
+    components: {
+        DragableTable
+    },
     data () {
         return {
             fid: '',
@@ -104,6 +111,22 @@ export default {
                     align: 'center'
                 },
                 {
+                    title: '拖拽',
+                    key: 'drag',
+                    align: 'center',
+                    render: (h) => {
+                        return h(
+                            'Icon',
+                            {
+                                props: {
+                                    type: 'arrow-move',
+                                    size: 24
+                                }
+                            }
+                        );
+                    }
+                },
+                {
                     title: '操作',
                     key: 'action',
                     fixed: 'left',
@@ -134,6 +157,13 @@ export default {
             ],
             tableDataFunc: [],
             tableDataOpt: [],
+            tableOpt: {
+                hasDragged: false,
+                isDragging: false,
+                oldIndex: 0,
+                newIndex: 0,
+                draggingRecord: [],
+            },
             dict: {
                 type: [
                     {
@@ -164,7 +194,7 @@ export default {
             }        
         }
     },
-    activated () {
+    mounted () {
         this.init()
     },
     methods: {
@@ -217,6 +247,18 @@ export default {
         removeAttr (attrs, id) {
             let i = attrs.findIndex(attr => attr.id == id);
             return attrs.splice(i, 1)
+        },
+        onStartSortTableOpt (from) {
+            this.tableOpt.oldIndex = from;
+            this.tableOpt.hasDragged = true;
+            this.tableOpt.isDragging = true;
+        },
+        onEndSortTableOpt (e) {
+            this.tableOpt.isDragging = false;
+            this.tableOpt.draggingRecord.unshift({
+                from: e.from + 1,
+                to: e.to + 1
+            });
         }
     }
 }

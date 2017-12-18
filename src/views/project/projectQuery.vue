@@ -87,13 +87,6 @@ export default {
             },
             columns: [
                 {
-                    title: '备注',
-                    key: 'remark',
-                    width: 150,
-                    sortable: true,
-                    align: 'center'
-                },
-                {
                     title: '项目标签',
                     key: 'label',
                     width: 150,
@@ -104,6 +97,12 @@ export default {
                     title: '项目名称',
                     key: 'name',
                     width: 150,
+                    sortable: true,
+                    align: 'center'
+                },
+                {
+                    title: '备注',
+                    key: 'remark',
                     sortable: true,
                     align: 'center'
                 },
@@ -143,10 +142,11 @@ export default {
         }
     },
     activated () {
-        this.page.current = 1;
-        this.getTableData();
+
     },
     mounted () {
+        this.page.current = 1;
+        this.getTableData();
         this.init();
     },
     methods: {
@@ -314,12 +314,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goProjectDelete(params.row.id);
+                                    this.goProjectSave(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '删除'
+                    label: '修改'
                 },
                 {
                     widget: 'Button',
@@ -356,12 +356,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goProjectSave(params.row.id);
+                                    this.goDictDetail(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '修改'
+                    label: '字典'
                 },
                 {
                     widget: 'Button',
@@ -377,12 +377,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goDictDetail(params.row.id);
+                                    this.goProjectDelete(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '字典'
+                    label: '删除'
                 },
             ];
             let optCount = opts.filter(opt => opt.attrs().style.display !== 'none').length;
