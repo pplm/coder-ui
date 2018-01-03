@@ -48,13 +48,13 @@
         <Form :model="saveForm" :label-width="100" >
         <Row>
             <Col span="8">
-                <FormItem label="标签" prop="label">
-                    <Input type="text" v-model="saveForm.label" placeholder="请输入标签"></Input>
+                <FormItem label="属性名称" prop="name">
+                    <Input type="text" v-model="saveForm.name" placeholder="请输入标签"></Input>
                 </FormItem>
             </Col>
             <Col span="8">
-                <FormItem label="名字" prop="name">
-                    <Input type="text" v-model="saveForm.name" placeholder="请输入名字"></Input>
+                <FormItem label="属性Code" prop="code">
+                    <Input type="text" v-model="saveForm.code" placeholder="请输入属性Code"></Input>
                 </FormItem>
             </Col>
             <Col span="8">
@@ -109,8 +109,8 @@
         <Row>
             <Col span="24">
                 <FormItem label="操作项" prop="optIds">
-                    <CheckboxGroup v-model="saveForm.optIds" @on-change="show">
-                        <Checkbox v-for="opt in saveModal.opts" :key="opt.id" :label="opt.id">{{ opt.label }}</Checkbox>
+                    <CheckboxGroup v-model="saveForm.optIds">
+                        <Checkbox v-for="opt in saveModal.opts" :key="opt.id" :label="opt.id">{{ opt.name }}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
             </Col>
@@ -139,16 +139,16 @@ export default {
                 opts: []
             },
             queryForm: {
-                label: '',
                 name: '',
+                code: '',
                 type: '',
                 length: '',
                 precise: '',
                 defaultValue: '',
             },
             saveForm: {
-                label: '',
                 name: '',
+                code: '',
                 type: '',
                 required: false,
                 length: '',
@@ -165,14 +165,14 @@ export default {
             },
             columnsList:[
                 {
-                    title: '标签',
-                    key: 'label',
+                    title: '属性名称',
+                    key: 'name',
                     width: 120,
                     align: 'center'
                 },
                 {
-                    title: '名字',
-                    key: 'name',
+                    title: '属性Code',
+                    key: 'code',
                     align: 'center'
                 },
                 {
@@ -349,9 +349,9 @@ export default {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.dict.dict = res.data.content.map(item => {
-                            let dictItems = item.dictItems.map(dictItem => dictItem.value + ':' + dictItem.label).toString()
+                            let dictItems = item.dictItems.map(dictItem => dictItem.value + ':' + dictItem.name).toString()
                              return {
-                                label: item.label + ' >> ' + dictItems,
+                                label: item.name + ' >> ' + dictItems,
                                 value: item.id
                             }
                         })
@@ -366,8 +366,8 @@ export default {
             this.getList()
         },
         doClear () {
-            this.queryForm.label = ''
             this.queryForm.name = ''
+            this.queryForm.code = ''
             this.queryForm.type = ''
             this.queryForm.length = ''
             this.queryForm.precise = ''
@@ -385,9 +385,6 @@ export default {
                 _self.saveModal.show = false
               })
 
-        },
-        show() {
-            console.log(this.saveForm.optIds)
         },
         doDelete (id) {
             let _self = this
@@ -417,7 +414,6 @@ export default {
             util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        console.log(res.data.content.content);
                         _self.tableData = res.data.content.content
                         _self.page.total = res.data.content.totalElements
                         _self.page.size = res.data.content.size
@@ -426,7 +422,7 @@ export default {
                 }
             }).catch(err => {
                 console.log(err)
-              })
+            })
         },
         showModalAdd() {
             this.clearSaveForm()
@@ -436,8 +432,8 @@ export default {
         processSaveForm() {
             let form = {
                 id: this.saveForm.id,
-                label: this.saveForm.label,
                 name: this.saveForm.name,
+                code: this.saveForm.code,
                 required: this.saveForm.required === "1" ? true : false,
                 type: this.saveForm.type,
                 length: this.saveForm.length,
@@ -451,15 +447,14 @@ export default {
                     id: id
                 }
             });
-            form.required = this.saveForm.required === true ? "1" : "0";
-            console.log(form);
+            form.required = this.saveForm.required === true ? 1 : 0;
             return form;
         },
         prepareSaveForm(form) {
             this.saveForm.id = form.id;
-            this.saveForm.label = form.label;
             this.saveForm.name = form.name;
-            this.saveForm.required = form.required === "1" ? true : false;
+            this.saveForm.code = form.code;
+            this.saveForm.required = form.required === 1 ? true : false;
             this.saveForm.type = form.type;
             this.saveForm.length = form.length;
             this.saveForm.precise = form.precise;
@@ -485,7 +480,7 @@ export default {
                 }
             }).catch(err => {
                 console.log(err)
-              })
+            })
             this.saveModal.show = true
             this.saveModal.title = '修改功能'
         },
@@ -502,8 +497,8 @@ export default {
             })
         },
         clearSaveForm () {
-            this.saveForm.label = ''
             this.saveForm.name = ''
+            this.saveForm.code = ''
             this.saveForm.type = ''
             this.saveForm.required = false
             this.saveForm.length = ''

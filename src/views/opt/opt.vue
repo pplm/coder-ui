@@ -42,13 +42,13 @@
     <Form :model="saveForm" :label-width="80" >
         <Row>
             <Col span="10">
-                <FormItem label="标签" prop="label">
-                    <Input type="text" v-model="saveForm.label"></Input>
+                <FormItem label="操作名称" prop="name">
+                    <Input type="text" v-model="saveForm.name"></Input>
                 </FormItem>
             </Col>
             <Col span="10">
-                <FormItem label="名字" prop="name">
-                    <Input type="text" v-model="saveForm.name"></Input>
+                <FormItem label="操作Code" prop="code">
+                    <Input type="text" v-model="saveForm.code"></Input>
                 </FormItem>
             </Col>
             <Col span="10">
@@ -123,8 +123,8 @@ export default {
                 spinShow: false,
             },
             queryForm: {
-                label: '',
                 name: '',
+                code: '',
                 type: '',
                 mode: '',
                 preUrl: '',
@@ -132,8 +132,8 @@ export default {
             },
             saveForm: {
                 id: '',
-                label: '',
                 name: '',
+                code: '',
                 type: '',
                 mode: '',
                 preUrl: '',
@@ -142,15 +142,15 @@ export default {
             },
             columnsList:[
                 {
-                    title: '标签',
-                    key: 'label',
+                    title: '操作名称',
+                    key: 'name',
                     width: 110,
                     align: 'center'
                 },
                 {
-                    title: '名字',
-                    key: 'name',
-                    width: 80,
+                    title: '操作Code',
+                    key: 'code',
+                    width: 110,
                     align: 'center'
                 },
                 {
@@ -463,8 +463,8 @@ export default {
         },
         clearSaveForm () {
             this.saveForm.id = ''
-            this.saveForm.label = ''
             this.saveForm.name = ''
+            this.saveForm.code = ''
             this.saveForm.type = ''
             this.saveForm.mode = ''
             this.saveForm.exeUrl = ''

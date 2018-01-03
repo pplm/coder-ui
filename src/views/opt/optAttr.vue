@@ -41,13 +41,13 @@ export default {
             fid: '',
             columnsListFunc: [
                 {
-                    title: '标签',
-                    key: 'label',
+                    title: '属性名称',
+                    key: 'name',
                     align: 'center'
                 },
                 {
-                    title: '名字',
-                    key: 'name',
+                    title: '属性Code',
+                    key: 'code',
                     align: 'center'
                 },
                 {
@@ -91,13 +91,13 @@ export default {
             ],
             columnsListOpt: [
                 {
-                    title: '标签',
-                    key: 'label',
+                    title: '属性名称',
+                    key: 'name',
                     align: 'center'
                 },
                 {
-                    title: '名字',
-                    key: 'name',
+                    title: '属性Code',
+                    key: 'code',
                     align: 'center'
                 },
                 {

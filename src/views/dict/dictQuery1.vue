@@ -9,7 +9,7 @@
         <Row>
             <Col span="8" style="margin-bottom: -14px;">
                 <FormItem label="标签" prop="label">
-                    <Input type="text" v-model="optForm.dictQuery.label"></Input>
+                    <Input type="text" v-model="optForm.dictQuery.name"></Input>
                 </FormItem>
             </Col>
         </Row>
@@ -27,8 +27,8 @@
     <Form :model="optForm.dictAdd" :label-width="100" >
         <Row>
             <Col span="10" style="margin-bottom: -14px;">
-                <FormItem label="标签" prop="label">
-                    <Input type="text" v-model="optForm.dictAdd.label"></Input>
+                <FormItem label="字典名称" prop="name">
+                    <Input type="text" v-model="optForm.dictAdd.name"></Input>
                 </FormItem>
             </Col>
         </Row>
@@ -45,7 +45,7 @@
                     <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
                 </Col>
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入标签" v-model="item.label"></Input>
+                    <Input type="text" placeholder="请输入名称" v-model="item.name"></Input>
                 </Col>
                 <Col span="7">
                     <Button v-if="optForm.dictAdd.dictItems.length > 1" type="primary" size="small" icon="minus" @click="removeDictItemAdd(index)"></Button>
@@ -61,8 +61,8 @@
     <Form :model="optForm.dictUpdate" :label-width="100" >
         <Row>
             <Col span="10" style="margin-bottom: -14px;">
-                <FormItem label="标签" prop="label">
-                    <Input type="text" v-model="optForm.dictUpdate.label"></Input>
+                <FormItem label="字典名称" prop="name">
+                    <Input type="text" v-model="optForm.dictUpdate.name"></Input>
                 </FormItem>
             </Col>
         </Row>
@@ -79,7 +79,7 @@
                     <Input type="text" placeholder="请输入值" v-model="item.value"></Input>
                 </Col>
                 <Col span="7" style="margin-right: 5px;">
-                    <Input type="text" placeholder="请输入标签" v-model="item.label"></Input>
+                    <Input type="text" placeholder="请输入名称" v-model="item.name"></Input>
                 </Col>
                 <Col span="7">
                     <Button v-if="optForm.dictUpdate.dictItems.length > 1" type="primary" size="small" icon="minus" @click="removeDictItemUpdate(index)"></Button>
@@ -122,24 +122,24 @@ export default {
         return {
             optForm: {
                 dictQuery: {
-                    label: ''
+                    name: ''
                 },
                 dictAdd: {
-                    label: '',
+                    name: '',
                     remark: '',
                     dictItems: [
                         {
-                            label: '',
+                            name: '',
                             value: ''
                         }
                     ]
                 },
                 dictUpdate: {
-                    label: '',
+                    name: '',
                     remark: '',
                     dictItems: [
                         {
-                            label: '',
+                            name: '',
                             value: ''
                         }
                     ]
@@ -163,8 +163,8 @@ export default {
             },
             columnsList:[
                 {
-                    title: '标签',
-                    key: 'label',
+                    title: '字典名称',
+                    key: 'name',
                     width: 160,
                     sortable: true,
                     align: 'center'
@@ -173,7 +173,7 @@ export default {
                     title: '字典项',
                     key: 'dictItems',
                     align: 'center',
-                    render: (h, params) => params.row.dictItems.map(dictItem => dictItem.value + "：" + dictItem.label + "，")
+                    render: (h, params) => params.row.dictItems.map(dictItem => dictItem.value + "：" + dictItem.name + "，")
                 },
                 {
                     title: '备注',
@@ -281,7 +281,7 @@ export default {
             this.getDictList()
         },
         doDictQueryClear () {
-            this.optForm.dictQuery.label = ''
+            this.optForm.dictQuery.name = ''
         },
         getDictList () {
             let _self = this
@@ -353,7 +353,7 @@ export default {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.optForm.dictUpdate.id = res.data.content.id
-                        _self.optForm.dictUpdate.label = res.data.content.label
+                        _self.optForm.dictUpdate.name = res.data.content.name
                         _self.optForm.dictUpdate.remark = res.data.content.remark
                         if (res.data.content.dictItems.length > 0) {
                             _self.optForm.dictUpdate.dictItems = res.data.content.dictItems

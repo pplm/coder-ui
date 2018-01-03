@@ -8,7 +8,7 @@
 <Card>
     <Row>
         <Col span="24" class="table-top-opt">
-            <Button type="primary" icon="plus" size="small" @click="goFuncSave">添加</Button>
+            <Button type="primary" icon="plus" size="small" @click="goFuncSave()">添加</Button>
         </Col>
     </Row>
     <Row>
@@ -40,13 +40,13 @@
         <Form :model="optForm.funcSave" :label-width="100">
             <Row>
                 <Col span="11">
-                    <FormItem label="功能标签" prop="label">
-                        <Input type="text" v-model="optForm.funcSave.label"></Input>
+                    <FormItem label="功能名称" prop="label">
+                        <Input type="text" v-model="optForm.funcSave.name"></Input>
                     </FormItem>
                 </Col>
                 <Col span="11">
-                    <FormItem label="功能名称" prop="name">
-                        <Input type="text" v-model="optForm.funcSave.name"></Input>
+                    <FormItem label="功能Code" prop="name">
+                        <Input type="text" v-model="optForm.funcSave.code"></Input>
                     </FormItem>
                 </Col>
             </Row>
@@ -92,15 +92,15 @@ export default {
             },
             columns: [
                 {
-                    title: '功能标签',
-                    key: 'label',
+                    title: '功能名称',
+                    key: 'name',
                     width: 150,
                     sortable: true,
                     align: 'center'
                 },
                 {
-                    title: '功能名称',
-                    key: 'name',
+                    title: '功能Code',
+                    key: 'code',
                     width: 150,
                     sortable: true,
                     align: 'center'
@@ -138,8 +138,8 @@ export default {
                     relaAttr: '',
                     permissionTag: '',
                     remark: '',
-                    label: '',
                     name: '',
+                    code: '',
                 },
             },
             optModal: {
@@ -157,9 +157,6 @@ export default {
             dict: {
             },
         }
-    },
-    activated () {
-
     },
     mounted () {
         this.optForm.pid = this.$route.params.id
@@ -246,7 +243,7 @@ export default {
         },
         showModalFuncSave (id) {
             if (id) {
-                this.optModal.funcSave.title = '编辑编辑';
+                this.optModal.funcSave.title = '编辑';
                 let _self = this;
                 util.ajax.get('/func/detail?id=' + id).then(res => {
                     if (res.status === 200) {
@@ -255,8 +252,8 @@ export default {
                             _self.optForm.funcSave.relaAttr = res.data.content.relaAttr;
                             _self.optForm.funcSave.permissionTag = res.data.content.permissionTag;
                             _self.optForm.funcSave.remark = res.data.content.remark;
-                            _self.optForm.funcSave.label = res.data.content.label;
                             _self.optForm.funcSave.name = res.data.content.name;
+                            _self.optForm.funcSave.code = res.data.content.code;
                         }
                     }
                     this.optModal.funcSave.loading = false;
@@ -265,7 +262,8 @@ export default {
                     console.log(err);
                 });
             } else {
-                this.optModal.funcSave.title = '添加编辑';
+                this.optModal.funcSave.loading = false;
+                this.optModal.funcSave.title = '添加';
             }
             this.optModal.funcSave.show = true;
         },
@@ -286,8 +284,8 @@ export default {
             this.optForm.funcSave.relaAttr = '';
             this.optForm.funcSave.permissionTag = '';
             this.optForm.funcSave.remark = '';
-            this.optForm.funcSave.label = '';
             this.optForm.funcSave.name = '';
+            this.optForm.funcSave.code = '';
         },
         goOptDetail (id) {
             this.$router.push({
@@ -338,12 +336,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goFuncSave(params.row.id);
+                                    this.goGenUpdate(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '修改'
+                    label: '生成'
                 },
                 {
                     widget: 'Button',
@@ -359,12 +357,12 @@ export default {
                             },
                             on: {
                                 click: () => {
-                                    this.goGenUpdate(params.row.id);
+                                    this.goFuncSave(params.row.id);
                                 }
                             }
                         };
                     },
-                    label: '生成'
+                    label: '修改'
                 },
                 {
                     widget: 'Button',

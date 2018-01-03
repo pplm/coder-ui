@@ -1,4 +1,3 @@
-
 <style lang="less">
     @import '../../styles/common.less';
 </style>
@@ -8,13 +7,13 @@
     <Form :model="optForm.queryForm" :label-width="100">
         <Row>
             <Col span="11">
-                <FormItem label="项目标签" prop="label">
-                    <Input type="text" v-model="optForm.queryForm.label"></Input>
+                <FormItem label="项目名称" prop="name">
+                    <Input type="text" v-model="optForm.queryForm.name"></Input>
                 </FormItem>
             </Col>
             <Col span="11">
-                <FormItem label="项目名称" prop="name">
-                    <Input type="text" v-model="optForm.queryForm.name"></Input>
+                <FormItem label="项目Code" prop="code">
+                    <Input type="text" v-model="optForm.queryForm.code"></Input>
                 </FormItem>
             </Col>
         </Row>
@@ -29,7 +28,7 @@
 <Card>
     <Row>
         <Col span="24" class="table-top-opt">
-            <Button type="primary" icon="plus" size="small" @click="goProjectSave">添加</Button>
+            <Button type="primary" icon="plus" size="small"  @click="goProjectSave()">添加</Button>
         </Col>
     </Row>
     <Row>
@@ -48,20 +47,20 @@
         <Form ref="projectSaveForm" :model="optForm.projectSave" :label-width="100" :rules="optRule.projectSave">
             <Row>
                 <Col span="11">
-                    <FormItem label="备注" prop="remark" >
-                        <Input type="textarea" v-model="optForm.projectSave.remark"></Input>
+                    <FormItem label="项目名称" prop="name" required>
+                        <Input type="text" v-model="optForm.projectSave.name"></Input>
                     </FormItem>
                 </Col>
                 <Col span="11">
-                    <FormItem label="项目标签" prop="label" required>
-                        <Input type="text" v-model="optForm.projectSave.label"></Input>
+                    <FormItem label="项目Code" prop="code" required>
+                        <Input type="text" v-model="optForm.projectSave.code"></Input>
                     </FormItem>
                 </Col>
             </Row>
             <Row>
                 <Col span="11">
-                    <FormItem label="项目名称" prop="name" required>
-                        <Input type="text" v-model="optForm.projectSave.name"></Input>
+                    <FormItem label="备注" prop="remark" >
+                        <Input type="textarea" v-model="optForm.projectSave.remark"></Input>
                     </FormItem>
                 </Col>
             </Row>
@@ -87,16 +86,14 @@ export default {
             },
             columns: [
                 {
-                    title: '项目标签',
-                    key: 'label',
-                    width: 150,
+                    title: '项目名称',
+                    key: 'name',
                     sortable: true,
                     align: 'center'
                 },
                 {
-                    title: '项目名称',
-                    key: 'name',
-                    width: 150,
+                    title: '项目Code',
+                    key: 'code',
                     sortable: true,
                     align: 'center'
                 },
@@ -109,14 +106,14 @@ export default {
             ],
             optForm: {
                 queryForm: {
-                    label: '',
                     name: '',
+                    code: '',
                 },
                 projectSave: {
                     id: '',
-                    remark: '',
-                    label: '',
                     name: '',
+                    code: '',
+                    remark: '',
                 },
             },
             optModal: {
@@ -129,20 +126,17 @@ export default {
             },
             optRule: {
                 projectSave: {
-                    label:[
-                        { required: true, message: '项目标签不能为空', trigger: 'blur' },
-                    ],
-                    name:[
+                    name: [
                         { required: true, message: '项目名称不能为空', trigger: 'blur' },
+                    ],
+                    code: [
+                        { required: true, message: '项目Code不能为空', trigger: 'blur' },
                     ],
                 },
             },
             dict: {
             },
         }
-    },
-    activated () {
-
     },
     mounted () {
         this.page.current = 1;
@@ -153,15 +147,18 @@ export default {
         init () {
             this.setOpts();
         },
-        getQueryForm () {
-            let queryForm = this.optForm.queryForm;
+        processQueryForm () {
+            let queryForm = {
+                name: this.optForm.queryForm.name,
+                code: this.optForm.queryForm.code,
+            };
             queryForm.page = this.page.current - 1;
             queryForm.size = this.page.size;
             return queryForm;
         },
         getTableData () {
             let _self = this;
-            util.ajax.get('/project/list', { params: this.getQueryForm() }).then(res => {
+            util.ajax.get('/project/list', { params: this.processQueryForm() }).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         if (res.data.content.content.length == 0 && _self.page.current > 1 ) {
@@ -190,8 +187,8 @@ export default {
             this.getTableData();
         },
         doQueryClear () {
-            this.optForm.queryForm.label = '';
             this.optForm.queryForm.name = '';
+            this.optForm.queryForm.code = '';
             this.doQuery();
         },
         goProjectDelete (id) {
@@ -235,6 +232,7 @@ export default {
                 this.optModal.projectSave.title = '编辑项目';
                 let _self = this;
                 util.ajax.get('/project/detail?id=' + id).then(res => {
+                    console.log(res);
                     if (res.status === 200) {
                         if (res.data.code === "0") {
                             _self.prepareProjectSaveForm(res.data.content);
@@ -246,6 +244,8 @@ export default {
                     console.log(err);
                 });
             } else {
+                this.clearProjectSaveForm ();
+                this.optModal.projectSave.loading = false;
                 this.optModal.projectSave.title = '添加项目';
             }
             this.optModal.projectSave.show = true;
@@ -271,24 +271,24 @@ export default {
         },
         prepareProjectSaveForm (form) {
             this.optForm.projectSave.id = form.id;
-            this.optForm.projectSave.remark = form.remark;
-            this.optForm.projectSave.label = form.label;
-            this.optForm.projectSave.name = form.name;
+            this.optForm.projectSave.name = form.name.toString();
+            this.optForm.projectSave.code = form.code.toString();
+            this.optForm.projectSave.remark = form.remark.toString();
         },
         processProjectSaveForm () {
             let form = {
                 id: this.optForm.projectSave.id,
-                remark: this.optForm.projectSave.remark,
-                label: this.optForm.projectSave.label,
                 name: this.optForm.projectSave.name,
+                code: this.optForm.projectSave.code,
+                remark: this.optForm.projectSave.remark,
             };
             return form;
         },
         clearProjectSaveForm () {
             this.optForm.projectSave.id = '';
-            this.optForm.projectSave.remark = '';
-            this.optForm.projectSave.label = '';
             this.optForm.projectSave.name = '';
+            this.optForm.projectSave.code = '';
+            this.optForm.projectSave.remark = '';
         },
         goDictDetail (id) {
             this.$router.push({
@@ -300,27 +300,6 @@ export default {
         },
         setOpts() {
             let opts = [
-                {
-                    widget: 'Button',
-                    attrs: params => {
-                        return {
-                            props: {
-                                type: 'primary',
-                                size: 'small'
-                            },
-                            style: {
-                                marginRight: '5px',
-                                display: 'inline',
-                            },
-                            on: {
-                                click: () => {
-                                    this.goProjectSave(params.row.id);
-                                }
-                            }
-                        };
-                    },
-                    label: '修改'
-                },
                 {
                     widget: 'Button',
                     attrs: params => {
@@ -362,6 +341,27 @@ export default {
                         };
                     },
                     label: '字典'
+                },
+                {
+                    widget: 'Button',
+                    attrs: params => {
+                        return {
+                            props: {
+                                type: 'primary',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px',
+                                display: 'inline',
+                            },
+                            on: {
+                                click: () => {
+                                    this.goProjectSave(params.row.id);
+                                }
+                            }
+                        };
+                    },
+                    label: '修改'
                 },
                 {
                     widget: 'Button',
