@@ -77,9 +77,30 @@
         </Spin>
     </Card>
 </Modal>
+<Modal width="900" v-model="optModal.genUpdate.show" @on-ok="optModal.genUpdate.show = false" title="生成代码">
+    <Row>
+        <Col style="margin-bottom: 5px;">
+      类型：<Select v-model="optForm.genUpdate.type" style="width:200px">
+                <Option value="list" key="list">list</Option>
+                <Option value="router-item" key="router-item">router-item</Option>
+            </Select>
+            <Button type="primary" :loading="optModal.genUpdate.gening" @click="doGenUpdate()">
+                <span v-if="!optModal.genUpdate.gening">生成代码</span>
+                <span v-else>生成中...</span>
+            </Button>
+            <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+        </Col>
+        <Col>
+            <Input id="codeContainer" type="textarea" v-model="optModal.genUpdate.content" :rows="15"></Input>
+            <Spin size="large" fix v-if="optModal.genUpdate.spinShow">生成中...</Spin>
+        </Col>
+    </Row>
+</Modal>
 </div></template>
 <script>
 import util from '@/libs/util';
+import Clipboard from 'clipboard';
+
 export default {
     data () {
         return {
@@ -132,6 +153,7 @@ export default {
                 },
                 genUpdate: {
                     id: '',
+                    type: 'list',
                 },
                 funcSave: {
                     id: '',
@@ -143,10 +165,11 @@ export default {
                 },
             },
             optModal: {
-                genUpdate: {
+                genUpdate: {                    
                     show: false,
-                    title: '生成',
-                    loading: true
+                    content: '',
+                    spinShow: false,
+                    gening: false,
                 },
                 funcSave: {
                     show: false,
@@ -159,7 +182,8 @@ export default {
         }
     },
     mounted () {
-        this.optForm.pid = this.$route.params.id
+        const clipboard = new Clipboard('.cbbtn');
+        this.optForm.pid = this.$route.params.id;
         this.page.current = 1;
         this.getTableData();
         this.init();
@@ -203,9 +227,9 @@ export default {
         },
         goAttrDetail (id) {
             this.$router.push({
-                name: 'attr_query',
+                name: 'attr_management',
                 params: {
-                    id: id
+                    fid: id
                 },
             });
         },
@@ -213,29 +237,28 @@ export default {
             this.showModalGenUpdate(id);
         },
         showModalGenUpdate (id) {
-            let _self = this;
-            util.ajax.get('?id=' + id).then(res => {
-                if (res.status === 200) {
-                    if (res.data.code === "0") {
-                        _self.optForm.genUpdate.id = res.data.content.id;
-                    }
-                }
-                this.optModal.genUpdate.loading = false;
-            }).catch(err => {
-                this.optModal.genUpdate.loading = false;
-                console.log(err);
-            })
-            this.optModal.genUpdate.show = true
+            this.optForm.genUpdate.id = id;
+            this.optModal.genUpdate.show = true;
+            this.optModal.genUpdate.content = '';
         },
         doGenUpdate () {
+            this.optModal.genUpdate.content = '';
+            this.optModal.genUpdate.gening = true;
+            this.optModal.genUpdate.spinShow = true;
             let _self = this;
-            util.ajax.post('', this.optForm.genUpdate).then(res => {
-                _self.getTableData();
-                _self.optModal.genUpdate.show = false;
-                _self.$Message.info(res.data.message);
+            util.ajax.post('/gen/func/iview-admin/' + this.optForm.genUpdate.type + '/' + this.optForm.genUpdate.id).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === '0') {
+                        _self.optModal.genUpdate.content = res.data.content;
+                        _self.optModal.genUpdate.gening = false;
+                        _self.optModal.genUpdate.spinShow = false;
+                    }
+                }
             }).catch(err => {
+                _self.optModal.genUpdate.gening = false;
+                _self.optModal.genUpdate.spinShow = false;
+                _self.$Message.error(res.data.message);
                 console.log(err);
-                _self.optModal.genUpdate.show = false;
             });
         },
         goFuncSave (id) {
@@ -289,9 +312,9 @@ export default {
         },
         goOptDetail (id) {
             this.$router.push({
-                name: 'opt_query',
+                name: 'opt_management',
                 params: {
-                    id: id
+                    fid: id
                 },
             });
         },

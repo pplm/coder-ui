@@ -89,6 +89,8 @@
     <Row>
         <Col style="margin-bottom: 5px;">
             <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+            <Button type="primary" @click="doAndShowGenerate()">重新生成</Button>
+            
         </Col>
         <Col>
             <Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="15"></Input>
@@ -121,6 +123,8 @@ export default {
                 show: false,
                 content: '',
                 spinShow: false,
+                id: '',
+                type: '',
             },
             queryForm: {
                 name: '',
@@ -357,11 +361,15 @@ export default {
     },
     methods: {
         doAndShowGenerate(obj) {
-            this.genModal.show = true
-            this.genModal.content = ''
-            this.genModal.spinShow = true
+            this.genModal.show = true;
+            this.genModal.content = '';
+            this.genModal.spinShow = true;
+            if (obj) {
+                this.genModal.id = obj.id;
+                this.genModal.type = obj.type;
+            }
             let _self = this
-            util.ajax.post('/gen/vue/opt/' + obj.type + '/' + obj.id).then(res => {
+            util.ajax.post('/gen/opt/iview-admin/' + this.genModal.type + '/' + this.genModal.id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.genModal.content = res.data.content
@@ -393,7 +401,6 @@ export default {
             this.doQuery()
         },
         doSave () {
-            console.log(this.saveForm)
             let _self = this;
             util.ajax.post('/opt/save?fid=' + this.fid, this.saveForm).then(function (res) {
                 _self.saveModal.show = false
@@ -429,7 +436,6 @@ export default {
         getList () {
             let _self = this
             util.ajax.get('/opt/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
-                console.log(res)
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.tableData = res.data.content.content

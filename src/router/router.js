@@ -69,6 +69,12 @@ export const otherRouter = {
             name: 'func_query', 
             component: resolve => require(['@/views/func/funcQuery.vue'], resolve)
         },
+        {
+            path: 'dictQuery/:id',
+            title: '字典管理',
+            name: 'dict_query', 
+            component: resolve => require(['@/views/dict/dictQuery.vue'], resolve)
+        },
     ]
 };
 

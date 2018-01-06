@@ -345,7 +345,7 @@ export default {
         },
         getDict() {
             let _self = this
-            util.ajax.get('/dict/listAll?pid=2').then(res => {
+            util.ajax.get('/dict/listAll?fid=' + this.fid).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
                         _self.dict.dict = res.data.content.map(item => {
@@ -451,6 +451,7 @@ export default {
             return form;
         },
         prepareSaveForm(form) {
+            console.log(form);
             this.saveForm.id = form.id;
             this.saveForm.name = form.name;
             this.saveForm.code = form.code;

@@ -278,7 +278,7 @@ export default {
     		this.genModal.gening = true
     		this.genModal.spinShow = true
     		let _self = this
-    		util.ajax.post('/gen/vue/' + this.genModal.id + '?type=' + this.genModal.type).then(res => {
+    		util.ajax.post('/gen/func/iview-admin/' + this.genModal.type + '/' + this.genModal.id).then(res => {
     			if (res.status === 200) {
     				if (res.data.code === '0') {
     					_self.genModal.content = res.data.content;
