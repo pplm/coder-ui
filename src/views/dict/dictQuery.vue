@@ -63,6 +63,17 @@
         </Spin>
     </Card>
 </Modal>
+<Modal width="900" v-model="optModal.genModal.show" @on-ok="optModal.genModal.show = false" title="生成代码">
+    <Row>
+        <Col style="margin-bottom: 5px;">
+            <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+        </Col>
+        <Col>
+            <Input id="codeContainer" type="textarea" v-model="optModal.genModal.content" :rows="15"></Input>
+            <Spin size="large" fix v-if="optModal.genModal.spinShow">生成中...</Spin>
+        </Col>
+    </Row>
+</Modal>
 </div></template>
 <script>
 import util from '@/libs/util';
@@ -120,6 +131,11 @@ export default {
                     okLoading: true,
                     loading: true
                 },
+                genModal: {
+                    show: false,
+                    content: '',
+                    spinShow: false,
+                },
             },
             optRule: {
                 dictSave: {
@@ -139,6 +155,26 @@ export default {
         this.init();
     },
     methods: {
+        doAndShowGenerate(id) {
+            this.optModal.genModal.show = true
+            this.optModal.genModal.content = ''
+            this.optModal.genModal.spinShow = true
+            let _self = this
+            util.ajax.post('/gen/vue/dict/' + id).then(res => {
+                if (res.status === 200) {
+                    if(res.data.code === "0") {
+                        _self.optModal.genModal.content = res.data.content
+                    } else {
+                        _self.optModal.genModal.content = res.data.message
+                    }
+                    _self.optModal.genModal.spinShow = false
+                }
+            }).catch(err => {
+                _self.optModal.genModal.content = err.message
+                _self.optModal.genModal.spinShow = false
+                console.log(err)
+            })
+        },
         init () {
             this.setOpts();
         },
