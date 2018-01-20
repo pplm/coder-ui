@@ -84,6 +84,13 @@
         </Row>
         <Row>
             <Col span="8">
+                <FormItem label="数据类型" prop="datatype">
+                    <Select v-model="saveForm.datatype" clearable placeholder="请选择数据类型">
+                        <Option v-for="item in dict.datatype" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+            </Col>
+            <Col span="8">
                 <FormItem label="长度" prop="length">
                     <Input type="text" v-model="saveForm.length" placeholder="请输入长度"></Input>
                 </FormItem>
@@ -93,14 +100,14 @@
                     <Input type="text" v-model="saveForm.precise" placeholder="请输入精度"></Input>
                 </FormItem>
             </Col>
+        </Row>
+        <Row>
             <Col span="8">
                 <FormItem label="默认值" prop="defaultValue">
                     <Input type="text" v-model="saveForm.defaultValue" placeholder="请输入默认值"></Input>
                 </FormItem>
             </Col>
-        </Row>
-        <Row>
-            <Col span="8">
+            <Col span="16">
                 <FormItem label="备注" prop="remark">
                     <Input type="textarea" v-model="saveForm.remark" placeholder="请输入备注"></Input>
                 </FormItem>
@@ -150,6 +157,7 @@ export default {
                 name: '',
                 code: '',
                 type: '',
+                datatype: '',
                 required: false,
                 length: '',
                 precise: '',
@@ -185,8 +193,30 @@ export default {
                             return params.row.type == item.value
                         }).map(item => {
                             return item.label
-                        }) + '【' + params.row.type + '】'
+                        }) + '【' + params.row.type + '】';
                     },
+                },
+                {
+                    title: '数据类型',
+                    key: 'datatype',
+                    align: 'center',
+                    render: (h, params) => {
+                        return this.dict.datatype.filter(item => {
+                            return params.row.datatype == item.value;
+                        }).map(item => {
+                            return item.label;
+                        });
+                    },
+                },
+                {
+                    title: '长度',
+                    key: 'length',
+                    align: 'center'
+                },
+                {
+                    title: '精度',
+                    key: 'precise',
+                    align: 'center'
                 },
                 {
                     title: '必填',
@@ -326,7 +356,25 @@ export default {
                     {
                         label: '是',
                         value: '1'
-                    }                    
+                    }
+                ],
+                datatype: [
+                    {
+                        label: 'String',
+                        value: 'string'
+                    },
+                    {
+                        label: 'Integer',
+                        value: 'int'
+                    },
+                    {
+                        label: 'Double',
+                        value: 'double'
+                    },
+                    {
+                        label: 'Text',
+                        value: 'text'
+                    },
                 ],
                 dict: [],
             }
@@ -358,31 +406,32 @@ export default {
                     }
                 }
             }).catch(err => {
-                console.log(err)
+                console.log(err);
             })
         },
         doQuery() {
-            this.clearPage()
-            this.getList()
+            this.clearPage();
+            this.getList();
         },
         doClear () {
-            this.queryForm.name = ''
-            this.queryForm.code = ''
-            this.queryForm.type = ''
-            this.queryForm.length = ''
-            this.queryForm.precise = ''
-            this.queryForm.defaultValue = ''
-            this.doQuery()
+            this.queryForm.name = '';
+            this.queryForm.code = '';
+            this.queryForm.type = '';
+            this.queryForm.datatype = '';
+            this.queryForm.length = '';
+            this.queryForm.precise = '';
+            this.queryForm.defaultValue = '';
+            this.doQuery();
         },
         doSave () {
             let _self = this;
             util.ajax.post('/attr/save?fid=' + this.fid, this.processSaveForm()).then(res => {
-                _self.saveModal.show = false
+                _self.saveModal.show = false;
                 _self.clearSaveForm();
-                _self.$Message.info('操作成功')
-                _self.getList()
+                _self.$Message.info('操作成功');
+                _self.getList();
               }).catch(err => {
-                _self.saveModal.show = false
+                _self.saveModal.show = false;
               })
 
         },
@@ -436,6 +485,7 @@ export default {
                 code: this.saveForm.code,
                 required: this.saveForm.required === "1" ? true : false,
                 type: this.saveForm.type,
+                datatype: this.saveForm.datatype,
                 length: this.saveForm.length,
                 precise: this.saveForm.precise,
                 defaultValue: this.saveForm.defaultValue,
@@ -457,6 +507,7 @@ export default {
             this.saveForm.code = form.code;
             this.saveForm.required = form.required === 1 ? true : false;
             this.saveForm.type = form.type;
+            this.saveForm.datatype = form.datatype;
             this.saveForm.length = form.length;
             this.saveForm.precise = form.precise;
             this.saveForm.defaultValue = form.defaultValue;
@@ -476,14 +527,14 @@ export default {
             util.ajax.get('/attr/detail?id=' + id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.prepareSaveForm(res.data.content)
+                        _self.prepareSaveForm(res.data.content);
                     }
                 }
             }).catch(err => {
-                console.log(err)
+                console.log(err);
             })
-            this.saveModal.show = true
-            this.saveModal.title = '修改功能'
+            this.saveModal.show = true;
+            this.saveModal.title = '修改功能';
         },
         loadOpts () {
             let _self = this
@@ -494,31 +545,32 @@ export default {
                     }
                 }
             }).catch(err => {
-                console.log(err)
+                console.log(err);
             })
         },
         clearSaveForm () {
-            this.saveForm.name = ''
-            this.saveForm.code = ''
-            this.saveForm.type = ''
-            this.saveForm.required = false
-            this.saveForm.length = ''
-            this.saveForm.precise = ''
-            this.saveForm.defaultValue = ''
-            this.saveForm.id = ''
-            this.saveForm.optIds = []
-            this.saveForm.opts = []
-            this.saveForm.dict.id = ''
-            this.saveForm.remark = ''
+            this.saveForm.name = '';
+            this.saveForm.code = '';
+            this.saveForm.type = '';
+            this.saveForm.datatype = '';
+            this.saveForm.required = false;
+            this.saveForm.length = '';
+            this.saveForm.precise = '';
+            this.saveForm.defaultValue = '';
+            this.saveForm.id = '';
+            this.saveForm.optIds = [];
+            this.saveForm.opts = [];
+            this.saveForm.dict.id = '';
+            this.saveForm.remark = '';
         },
         clearPage () {
-            this.page.size = 10
-            this.page.current = 1
-            this.page.num = 0
+            this.page.size = 10;
+            this.page.current = 1;
+            this.page.num = 0;
         },
         changePage (number) {
-            this.page.num = number - 1
-            this.getList()
+            this.page.num = number - 1;
+            this.getList();
         }
     }
 }

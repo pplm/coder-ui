@@ -21,7 +21,7 @@
             <Page :total="page.total" :current="page.current" :page-size="page.size" show-total show-elevator size="small" @on-change="changePage">总计 {{page.total}} 条</Page>
         </Col>
     </Row>
-    
+
 </Card>
 <Modal width="800" v-model="optModal.genUpdate.show" :mask-closable="false" loading @on-ok="doGenUpdate" :title="optModal.genUpdate.title">
     <Card :bordered="false" dis-hover>
@@ -77,12 +77,15 @@
         </Spin>
     </Card>
 </Modal>
-<Modal width="900" v-model="optModal.genUpdate.show" @on-ok="optModal.genUpdate.show = false" title="生成代码">
+<Modal width="1000" v-model="optModal.genUpdate.show" @on-ok="optModal.genUpdate.show = false" title="生成代码">
     <Row>
-        <Col style="margin-bottom: 5px;">
-      类型：<Select v-model="optForm.genUpdate.type" style="width:200px">
-                <Option value="list" key="list">list</Option>
-                <Option value="router-item" key="router-item">router-item</Option>
+        <Col style="margin-bottom: 15px;">
+      框架： <Select v-model="optForm.genUpdate.framework" style="width:200px; margin-right: 20px;">
+                <Option v-for="item in dict.framework" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+      类型： <Select v-model="optForm.genUpdate.type" style="width:200px; margin-right: 20px;">
+                <Option v-if="optForm.genUpdate.framework == 'iview-admin'" v-for="item in dict.typeIviewAdmin" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Option v-if="optForm.genUpdate.framework == 'lumen'" v-for="item in dict.typeLumen" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Button type="primary" :loading="optModal.genUpdate.gening" @click="doGenUpdate()">
                 <span v-if="!optModal.genUpdate.gening">生成代码</span>
@@ -91,7 +94,7 @@
             <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
         </Col>
         <Col>
-            <Input id="codeContainer" type="textarea" v-model="optModal.genUpdate.content" :rows="15"></Input>
+            <Input id="codeContainer" type="textarea" v-model="optModal.genUpdate.content" :rows="20"></Input>
             <Spin size="large" fix v-if="optModal.genUpdate.spinShow">生成中...</Spin>
         </Col>
     </Row>
@@ -154,6 +157,7 @@ export default {
                 genUpdate: {
                     id: '',
                     type: 'list',
+                    framework: 'iview-admin',
                 },
                 funcSave: {
                     id: '',
@@ -165,7 +169,7 @@ export default {
                 },
             },
             optModal: {
-                genUpdate: {                    
+                genUpdate: {
                     show: false,
                     content: '',
                     spinShow: false,
@@ -178,6 +182,32 @@ export default {
                 },
             },
             dict: {
+                framework: [
+                    {
+                        label: 'Lumen (PHP)',
+                        value: 'lumen'
+                    },
+                    {
+                        label: 'Iview-Admin (Vue.js)',
+                        value: 'iview-admin'
+                    },
+                ],
+                typeIviewAdmin: [
+                    {
+                        label: 'list',
+                        value: 'list'
+                    },
+                ],
+                typeLumen: [
+                    {
+                        label: 'Controller',
+                        value: 'controller'
+                    },
+                    {
+                        label: 'Migration',
+                        value: 'migration'
+                    },
+                ]
             },
         }
     },
@@ -246,7 +276,7 @@ export default {
             this.optModal.genUpdate.gening = true;
             this.optModal.genUpdate.spinShow = true;
             let _self = this;
-            util.ajax.post('/gen/func/iview-admin/' + this.optForm.genUpdate.type + '/' + this.optForm.genUpdate.id).then(res => {
+            util.ajax.post('/gen/func/' + this.optForm.genUpdate.framework + '/' + this.optForm.genUpdate.type + '/' + this.optForm.genUpdate.id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === '0') {
                         _self.optModal.genUpdate.content = res.data.content;
@@ -465,6 +495,16 @@ export default {
                         }));
                     }
                 });
+            }
+        },
+    },
+    watch: {
+        //生命周期属性值是方法时，不可以使用箭头函数，无法获取this对象。因为箭头方法邦定父类上下文，生命周期属性属于this，邦定父类为undefined.
+        "optForm.genUpdate.framework": function (curVal, oldVal) {
+            if (curVal == "lumen") {
+                this.optForm.genUpdate.type = "controller";
+            } else {
+                this.optForm.genUpdate.type = "list";
             }
         },
     }
