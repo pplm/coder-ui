@@ -71,9 +71,29 @@
         </Spin>
     </Card>
 </Modal>
+<Modal width="1000" v-model="optModal.rdbgUpdate.show" @on-ok="optModal.rdbgUpdate.show = false" title="生成代码">
+    <Row>
+        <Col style="margin-bottom: 15px;">
+    数据库： <Select v-model="optForm.rdbgUpdate.type" style="width:200px; margin-right: 20px;">
+                <Option v-for="item in dict.type" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <Button type="primary" :loading="optModal.rdbgUpdate.gening" @click="doRdbgUpdate()">
+                <span v-if="!optModal.rdbgUpdate.gening">生成代码</span>
+                <span v-else>生成中...</span>
+            </Button>
+            <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
+        </Col>
+        <Col>
+            <Input id="codeContainer" type="textarea" v-model="optModal.rdbgUpdate.content" :rows="20"></Input>
+            <Spin size="large" fix v-if="optModal.rdbgUpdate.spinShow">生成中...</Spin>
+        </Col>
+    </Row>
+</Modal>
 </div></template>
 <script>
 import util from '@/libs/util';
+import Clipboard from 'clipboard';
+
 export default {
     data () {
         return {
@@ -109,6 +129,10 @@ export default {
                     name: '',
                     code: '',
                 },
+                rdbgUpdate: {
+                    id: '',
+                    type: 'mysql',
+                },
                 projectSave: {
                     id: '',
                     name: '',
@@ -117,6 +141,12 @@ export default {
                 },
             },
             optModal: {
+                rdbgUpdate: {
+                    show: false,
+                    content: '',
+                    spinShow: false,
+                    gening: false,
+                },
                 projectSave: {
                     show: false,
                     title: '项目',
@@ -135,6 +165,12 @@ export default {
                 },
             },
             dict: {
+                type: [
+                    {
+                        label: 'Mysql',
+                        value: 'mysql'
+                    },
+                ],
             },
         }
     },
@@ -224,6 +260,34 @@ export default {
                 },
             });
         },
+        goRdbgUpdate (id) {
+            this.showModalRdbgUpdate(id);
+        },
+        showModalRdbgUpdate (id) {
+            this.optForm.rdbgUpdate.id = id;
+            this.optModal.rdbgUpdate.show = true;
+            this.optModal.rdbgUpdate.content = '';
+        },
+        doRdbgUpdate () {
+            this.optModal.rdbgUpdate.content = '';
+            this.optModal.rdbgUpdate.gening = true;
+            this.optModal.rdbgUpdate.spinShow = true;
+            let _self = this;
+            util.ajax.post('/gen/project/database/' + this.optForm.rdbgUpdate.type + '/' + this.optForm.rdbgUpdate.id).then(res => {
+                if (res.status === 200) {
+                    if (res.data.code === '0') {
+                        _self.optModal.rdbgUpdate.content = res.data.content;
+                        _self.optModal.rdbgUpdate.gening = false;
+                        _self.optModal.rdbgUpdate.spinShow = false;
+                    }
+                }
+            }).catch(err => {
+                _self.optModal.rdbgUpdate.gening = false;
+                _self.optModal.rdbgUpdate.spinShow = false;
+                _self.$Message.error(res.data.message);
+                console.log(err);
+            });
+        },
         goProjectSave (id) {
             this.showModalProjectSave(id);
         },
@@ -300,6 +364,27 @@ export default {
         },
         setOpts() {
             let opts = [
+                {
+                    widget: 'Button',
+                    attrs: params => {
+                        return {
+                            props: {
+                                type: 'primary',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px',
+                                display: 'inline',
+                            },
+                            on: {
+                                click: () => {
+                                    this.goRdbgUpdate(params.row.id);
+                                }
+                            }
+                        };
+                    },
+                    label: 'RDBG'
+                },
                 {
                     widget: 'Button',
                     attrs: params => {
