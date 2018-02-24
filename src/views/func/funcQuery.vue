@@ -86,6 +86,7 @@
       类型： <Select v-model="optForm.genUpdate.type" style="width:200px; margin-right: 20px;">
                 <Option v-if="optForm.genUpdate.framework == 'iview-admin'" v-for="item in dict.typeIviewAdmin" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 <Option v-if="optForm.genUpdate.framework == 'lumen'" v-for="item in dict.typeLumen" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Option v-if="optForm.genUpdate.framework == 'database'" v-for="item in dict.typeRdb" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Button type="primary" :loading="optModal.genUpdate.gening" @click="doGenUpdate()">
                 <span v-if="!optModal.genUpdate.gening">生成代码</span>
@@ -191,6 +192,10 @@ export default {
                         label: 'Iview-Admin (Vue.js)',
                         value: 'iview-admin'
                     },
+                    {
+                        label: 'RDB(Relation Database)',
+                        value: 'database'
+                    },
                 ],
                 typeIviewAdmin: [
                     {
@@ -207,6 +212,12 @@ export default {
                         label: 'Migration',
                         value: 'migration'
                     },
+                ],
+                typeRdb: [
+                    {
+                        label: 'Mysql',
+                        value: 'mysql'
+                    }
                 ]
             },
         }
@@ -503,6 +514,8 @@ export default {
         "optForm.genUpdate.framework": function (curVal, oldVal) {
             if (curVal == "lumen") {
                 this.optForm.genUpdate.type = "controller";
+            } else if (curVal == "database") {
+                this.optForm.genUpdate.type = "mysql";
             } else {
                 this.optForm.genUpdate.type = "list";
             }

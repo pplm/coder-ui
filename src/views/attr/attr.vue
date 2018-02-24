@@ -107,6 +107,24 @@
                     <Input type="text" v-model="saveForm.defaultValue" placeholder="请输入默认值"></Input>
                 </FormItem>
             </Col>
+            <Col span="8">
+                <FormItem label="数据库列" prop="dbFlag">
+                    <i-switch v-model="saveForm.dbFlag">
+                        <span slot="open">是</span>
+                        <span slot="close">否</span>
+                    </i-switch>
+                </FormItem>
+            </Col>
+            <Col span="8" v-if="saveForm.dbFlag == 1">
+                <FormItem label="索引" prop="dbIdxFlag">
+                    <i-switch v-model="saveForm.dbIdxFlag">
+                        <span slot="open">是</span>
+                        <span slot="close">否</span>
+                    </i-switch>
+                </FormItem>
+            </Col>
+        </Row>
+        <Row>
             <Col span="16">
                 <FormItem label="备注" prop="remark">
                     <Input type="textarea" v-model="saveForm.remark" placeholder="请输入备注"></Input>
@@ -164,6 +182,8 @@ export default {
                 defaultValue: '',
                 textarea: '',
                 id: '',
+                dbFlag: '',
+                dbIdxFlag: '',
                 remark: '',
                 optIds: [],
                 opts: [],
@@ -233,22 +253,51 @@ export default {
                     align: 'center'
                 },
                 {
-                    title: '备注',
-                    key: 'remark',
-                    align: 'center'
+                    title: '数据库列',
+                    key: 'dbFlag',
+                    width: 120,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('Icon', {
+                            props: {
+                                type: params.row.dbFlag == '1' ? "ios-checkmark" : "ios-close-outline",
+                                class: "ivu-icon",
+                            },
+                            style: {
+                                fontSize: '24px',
+                            }
+                        });
+                    },
+                },
+                {
+                    title: '索引',
+                    key: 'dbIdxFlag',
+                    width: 70,
+                    align: 'center',
+                    render: (h, params) => {
+                        return h('Icon', {
+                            props: {
+                                type: params.row.dbIdxFlag == '1' ? "ios-checkmark" : "ios-close-outline",
+                                class: "ivu-icon",
+                            },
+                            style: {
+                                fontSize: '24px',
+                            }
+                        });
+                    },
                 },
                 {
                     title: '操作',
                     key: 'action',
                     fixed: 'right',
-                    width: 200,
+                    width: 220,
                     render: (h, params) => {
-                          return h('div', [
-                              h('Button', {
+                        return h('div', [
+                            h('Button', {
                                 props: {
                                     type: 'primary',
-                                      icon: 'document',
-                                      size: 'small'
+                                    icon: 'document',
+                                    size: 'small'
                                 },
                                 style: {
                                       marginRight: '5px'
@@ -267,34 +316,34 @@ export default {
                             h('Button', {
                                 props: {
                                     type: 'primary',
-                                      icon: 'compose',
-                                      size: 'small'
+                                    icon: 'compose',
+                                    size: 'small'
                                 },
                                 style: {
                                       marginRight: '5px'
                                 },
                                 on: {
-                                      click: () => {
-                                          this.showModalUpdate(params.row.id)
-                                       }
-                                   }
+                                    click: () => {
+                                        this.showModalUpdate(params.row.id)
+                                    }
+                                },
                             }, '编辑'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
-                                      icon: 'ios-trash-outline',
-                                      size: 'small'
+                                    icon: 'ios-trash-outline',
+                                    size: 'small'
                                 },
                                 style: {
                                       marginRight: '5px'
                                 },
                                 on: {
-                                      click: () => {
-                                          this.doDelete(params.row.id)
-                                       }
-                                   }
-                            }, '删除')
-                          ])
+                                    click: () => {
+                                        this.doDelete(params.row.id)
+                                    }
+                                },
+                            }, '删除'),
+                        ])
                     }
                 }
             ],
@@ -358,22 +407,50 @@ export default {
                         value: '1'
                     }
                 ],
+                dbFlag: [
+                    {
+                        label: '否',
+                        value: '0'
+                    },
+                    {
+                        label: '是',
+                        value: '1'
+                    }
+                ],
+                dbIdxFlag: [
+                    {
+                        label: '否',
+                        value: '0'
+                    },
+                    {
+                        label: '是',
+                        value: '1'
+                    }
+                ],
                 datatype: [
                     {
-                        label: 'String',
+                        label: 'String(文本)',
                         value: 'string'
                     },
                     {
-                        label: 'Integer',
+                        label: 'Integer(整数)',
                         value: 'int'
                     },
                     {
-                        label: 'Double',
+                        label: 'Long(长整数)',
+                        value: 'long'
+                    },
+                    {
+                        label: 'Double(浮点数)',
                         value: 'double'
                     },
                     {
-                        label: 'Text',
+                        label: 'Text(长文本)',
                         value: 'text'
+                    },
+                    {
+                        label: 'Datetime(日期时间)',
+                        value: 'datetime'
                     },
                 ],
                 dict: [],
@@ -381,18 +458,18 @@ export default {
         }
     },
     mounted () {
-        this.init()
-        this.loadOpts()
-        this.getDict()
+        this.init();
+        this.loadOpts();
+        this.getDict();
     },
     methods: {
         init () {
-            this.fid = this.$route.params.fid
-            this.clearPage()
-            this.getList()
+            this.fid = this.$route.params.fid;
+            this.clearPage();
+            this.getList();
         },
         getDict() {
-            let _self = this
+            let _self = this;
             util.ajax.get('/dict/listAll?fid=' + this.fid).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
@@ -436,7 +513,7 @@ export default {
 
         },
         doDelete (id) {
-            let _self = this
+            let _self = this;
             this.$Modal.confirm({
                 title: '删除',
                 content: '确定要删除？',
@@ -444,46 +521,45 @@ export default {
                 onOk: () => {
                     let _modal = this.$Modal
                     util.ajax.post('/attr/delete?id=' + id).then(res => {
-                        _modal.remove()
+                        _modal.remove();
                         if (res.status === 200) {
                             if (res.data.code === "0") {
-                                _self.$Message.info('操作成功')
-                                _self.getList()
+                                _self.$Message.info('操作成功');
+                                _self.getList();
                             }
                         }
                     }).catch(err => {
-                        _modal.remove()
-                        console.log(err)
+                        _modal.remove();
+                        console.log(err);
                     })
                 }
             })
         },
         getList () {
-            let _self = this
+            let _self = this;
             util.ajax.get('/attr/list?fid=' + this.fid + '&page=' + this.page.num + '&size=' + this.page.size).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
-                        _self.tableData = res.data.content.content
-                        _self.page.total = res.data.content.totalElements
-                        _self.page.size = res.data.content.size
-                        _self.page.current = res.data.content.number + 1
+                        _self.tableData = res.data.content.content;
+                        _self.page.total = res.data.content.totalElements;
+                        _self.page.size = res.data.content.size;
+                        _self.page.current = res.data.content.number + 1;
                     }
                 }
             }).catch(err => {
-                console.log(err)
+                console.log(err);
             })
         },
         showModalAdd() {
-            this.clearSaveForm()
-            this.saveModal.title = '添加功能'
-            this.saveModal.show = true
+            this.clearSaveForm();
+            this.saveModal.title = '添加功能';
+            this.saveModal.show = true;
         },
         processSaveForm() {
             let form = {
                 id: this.saveForm.id,
                 name: this.saveForm.name,
                 code: this.saveForm.code,
-                required: this.saveForm.required === "1" ? true : false,
                 type: this.saveForm.type,
                 datatype: this.saveForm.datatype,
                 length: this.saveForm.length,
@@ -498,14 +574,17 @@ export default {
                 }
             });
             form.required = this.saveForm.required === true ? 1 : 0;
+            form.dbFlag = this.saveForm.dbFlag === true ? 1 : 0;
+            form.dbIdxFlag = this.saveForm.dbIdxFlag === true ? 1 : 0;
             return form;
         },
         prepareSaveForm(form) {
-            console.log(form);
             this.saveForm.id = form.id;
             this.saveForm.name = form.name;
             this.saveForm.code = form.code;
             this.saveForm.required = form.required === 1 ? true : false;
+            this.saveForm.dbFlag = form.dbFlag === 1 ? true : false;
+            this.saveForm.dbIdxFlag = form.dbIdxFlag === 1 ? true : false;
             this.saveForm.type = form.type;
             this.saveForm.datatype = form.datatype;
             this.saveForm.length = form.length;
@@ -523,7 +602,7 @@ export default {
             this.saveForm.optIds = form.opts.map(opt => opt.id);
         },
         showModalUpdate(id) {
-            let _self = this
+            let _self = this;
             util.ajax.get('/attr/detail?id=' + id).then(res => {
                 if (res.status === 200) {
                     if (res.data.code === "0") {
