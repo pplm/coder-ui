@@ -212,6 +212,10 @@ export default {
                         label: 'Migration',
                         value: 'migration'
                     },
+                    {
+                        label: 'Model',
+                        value: 'model'
+                    }
                 ],
                 typeRdb: [
                     {
