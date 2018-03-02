@@ -254,7 +254,7 @@ export default {
         },
         goFuncDetail (id) {
             this.$router.push({
-                name: 'func_query',
+                name: 'func_list',
                 params: {
                     id: id
                 },
@@ -356,7 +356,7 @@ export default {
         },
         goDictDetail (id) {
             this.$router.push({
-                name: 'dict_query',
+                name: 'dict_list',
                 params: {
                     id: id
                 },

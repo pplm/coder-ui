@@ -60,20 +60,36 @@ export const otherRouter = {
         { path: 'order/:order_id', title: '订单详情', name: 'order_info', component: resolve => { require(['@/views/advanced-router/component/order-info.vue'], resolve); } },  // 用于展示动态路由
         { path: 'shopping', title: '购物详情', name: 'shopping', component: resolve => { require(['@/views/advanced-router/component/shopping-info.vue'], resolve); } },  // 用于展示带参路由
         { path: 'message', title: '消息中心', name: 'message_index', component: resolve => { require(['@/views/message/message.vue'], resolve); } },
-        { path: 'attr/:fid', title: '属性管理', name: 'attr_management', component: resolve => { require(['@/views/attr/attr.vue'], resolve); } },
-        { path: 'opt/:fid', title: '操作管理', name: 'opt_management', component: resolve => { require(['@/views/opt/opt.vue'], resolve); } },
-        { path: 'optAttr/:oid/:fid', title: '操作属性管理', name: 'opt_attr_management', component: resolve => { require(['@/views/opt/optAttr.vue'], resolve); } },
         {
-            path: 'funcQuery/:id',
-            title: '功能管理',
-            name: 'func_query', 
-            component: resolve => require(['@/views/func/funcQuery.vue'], resolve)
+            path: 'attrList/:fid',
+            title: '属性管理',
+            name: 'attr_list',
+            component: resolve => { require(['@/views/attr/attrList.vue'], resolve); }
         },
         {
-            path: 'dictQuery/:id',
+            path: 'optList/:fid',
+            title: '操作管理',
+            name: 'opt_list',
+            component: resolve => { require(['@/views/opt/optList.vue'], resolve); }
+        },
+        { path: 'optAttrList/:oid/:fid', title: '操作属性管理', name: 'opt_attr_list', component: resolve => { require(['@/views/opt/optAttrList.vue'], resolve); } },
+        {
+            path: 'funcList/:id',
+            title: '功能管理',
+            name: 'func_list',
+            component: resolve => require(['@/views/func/funcList.vue'], resolve)
+        },
+        {
+            path: 'dictList/:id',
             title: '字典管理',
-            name: 'dict_query', 
-            component: resolve => require(['@/views/dict/dictQuery.vue'], resolve)
+            name: 'dict_list',
+            component: resolve => require(['@/views/dict/dictList.vue'], resolve)
+        },
+        {
+            path: 'ifcList/:id',
+            title: '接口管理',
+            name: 'ifc_list',
+            component: resolve => require(['@/views/ifc/ifcList.vue'], resolve)
         },
     ]
 };
@@ -253,10 +269,10 @@ export const appRouter = [
         component: Main,
         children: [
             {
-                path: '/dictQuery1', 
+                path: '/dictQuery1',
                 title: '字典信息列表',
                 name: 'dict_query1',
-                component: resolve => { require(['@/views/dict/dictQuery1.vue'], resolve); } 
+                component: resolve => { require(['@/views/dict/dictQuery1.vue'], resolve); }
             },
         ]
     },
@@ -268,10 +284,10 @@ export const appRouter = [
         component: Main,
         children: [
             {
-                path: '/projectQuery', 
+                path: '/projectList',
                 title: '项目信息列表',
-                name: 'project_query',
-                component: resolve => { require(['@/views/project/projectQuery.vue'], resolve); } 
+                name: 'project_list',
+                component: resolve => { require(['@/views/project/projectList.vue'], resolve); }
             },
         ]
     },

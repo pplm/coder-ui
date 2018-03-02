@@ -86,6 +86,7 @@
       类型： <Select v-model="optForm.genUpdate.type" style="width:200px; margin-right: 20px;">
                 <Option v-if="optForm.genUpdate.framework == 'iview-admin'" v-for="item in dict.typeIviewAdmin" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 <Option v-if="optForm.genUpdate.framework == 'lumen'" v-for="item in dict.typeLumen" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                <Option v-if="optForm.genUpdate.framework == 'spring'" v-for="item in dict.typeSpring" :value="item.value" :key="item.value">{{ item.label }}</Option>
                 <Option v-if="optForm.genUpdate.framework == 'database'" v-for="item in dict.typeRdb" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
             <Button type="primary" :loading="optModal.genUpdate.gening" @click="doGenUpdate()">
@@ -185,12 +186,16 @@ export default {
             dict: {
                 framework: [
                     {
+                        label: 'Iview-Admin (Vue.js)',
+                        value: 'iview-admin'
+                    },
+                    {
                         label: 'Lumen (PHP)',
                         value: 'lumen'
                     },
                     {
-                        label: 'Iview-Admin (Vue.js)',
-                        value: 'iview-admin'
+                        label: 'Spring (Java)',
+                        value: 'spring'
                     },
                     {
                         label: 'RDB(Relation Database)',
@@ -215,7 +220,21 @@ export default {
                     {
                         label: 'Model',
                         value: 'model'
-                    }
+                    },
+                ],
+                typeSpring: [
+                    {
+                        label: 'Controller',
+                        value: 'controller'
+                    },
+                    {
+                        label: 'bean',
+                        value: 'bean'
+                    },
+                    {
+                        label: 'Service',
+                        value: 'service'
+                    },
                 ],
                 typeRdb: [
                     {
@@ -272,7 +291,7 @@ export default {
         },
         goAttrDetail (id) {
             this.$router.push({
-                name: 'attr_management',
+                name: 'attr_list',
                 params: {
                     fid: id
                 },
@@ -357,7 +376,15 @@ export default {
         },
         goOptDetail (id) {
             this.$router.push({
-                name: 'opt_management',
+                name: 'opt_list',
+                params: {
+                    fid: id
+                },
+            });
+        },
+        goIfcDetail (id) {
+            this.$router.push({
+                name: 'ifc_list',
                 params: {
                     fid: id
                 },
@@ -488,6 +515,27 @@ export default {
                             },
                             on: {
                                 click: () => {
+                                    this.goIfcDetail(params.row.id);
+                                }
+                            }
+                        };
+                    },
+                    label: '接口'
+                },
+                {
+                    widget: 'Button',
+                    attrs: params => {
+                        return {
+                            props: {
+                                type: 'primary',
+                                size: 'small'
+                            },
+                            style: {
+                                marginRight: '5px',
+                                display: 'inline',
+                            },
+                            on: {
+                                click: () => {
                                     this.goDeleteDelete(params.row.id);
                                 }
                             }
@@ -517,6 +565,8 @@ export default {
         //生命周期属性值是方法时，不可以使用箭头函数，无法获取this对象。因为箭头方法邦定父类上下文，生命周期属性属于this，邦定父类为undefined.
         "optForm.genUpdate.framework": function (curVal, oldVal) {
             if (curVal == "lumen") {
+                this.optForm.genUpdate.type = "controller";
+            } else if (curVal == "spring") {
                 this.optForm.genUpdate.type = "controller";
             } else if (curVal == "database") {
                 this.optForm.genUpdate.type = "mysql";

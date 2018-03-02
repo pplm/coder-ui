@@ -38,8 +38,8 @@
         </Row>
     </Form>
 </Card>
-<Modal width="700" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
-    <Form :model="saveForm" :label-width="80" >
+<Modal width="900" v-model="saveModal.show" loading @on-ok="doSave" :title="saveModal.title">
+    <Form :model="saveForm" :label-width="100" >
         <Row>
             <Col span="10">
                 <FormItem label="操作名称" prop="name">
@@ -51,6 +51,8 @@
                     <Input type="text" v-model="saveForm.code"></Input>
                 </FormItem>
             </Col>
+        </Row>
+        <Row>
             <Col span="10">
                 <FormItem label="类型" prop="type">
                     <Select v-model="saveForm.type" clearable placeholder="请选择类型" style="width:174px">
@@ -65,14 +67,32 @@
                     </Select>
                 </FormItem>
             </Col>
+        </Row>
+        <Row>
             <Col span="10">
                 <FormItem label="数据准备url" prop="preUrl">
                     <Input type="text" v-model="saveForm.preUrl"></Input>
                 </FormItem>
             </Col>
             <Col span="10">
+                <FormItem label="数据准备method" prop="preMethod">
+                    <Select v-model="saveForm.preMethod" clearable placeholder="请选择method" style="width:174px">
+                        <Option v-for="item in dict.preMethod" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="10">
                 <FormItem label="执行url" prop="exeUrl">
                     <Input type="text" v-model="saveForm.exeUrl"></Input>
+                </FormItem>
+            </Col>
+            <Col span="10">
+                <FormItem label="执行method" prop="exeMethod">
+                    <Select v-model="saveForm.exeMethod" clearable placeholder="请选择method" style="width:174px">
+                        <Option v-for="item in dict.exeMethod" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
                 </FormItem>
             </Col>
         </Row>
@@ -90,7 +110,7 @@
         <Col style="margin-bottom: 5px;">
             <Button type="primary" class="cbbtn" data-clipboard-target="#codeContainer" @click="$Message.info('已复制到剪切板')">复制代码</Button>
             <Button type="primary" @click="doAndShowGenerate()">重新生成</Button>
-            
+
         </Col>
         <Col>
             <Input id="codeContainer" type="textarea" v-model="genModal.content" :rows="15"></Input>
@@ -141,7 +161,9 @@ export default {
                 type: '',
                 mode: '',
                 preUrl: '',
+                preMethod: '',
                 exeUrl: '',
+                exeMethod: '',
                 permissionTag: ''
             },
             columnsList:[
@@ -189,9 +211,33 @@ export default {
                     align: 'center'
                 },
                 {
+                    title: '数据准备method',
+                    key: 'preMethod',
+                    align: 'center',
+                    render: (h, params) => {
+                        return this.dict.preMethod.filter(item => {
+                            return params.row.preMethod == item.value
+                        }).map(item => {
+                            return item.label
+                        })
+                    }
+                },
+                {
                     title: '执行url',
                     key: 'exeUrl',
                     align: 'center'
+                },
+                {
+                    title: '执行method',
+                    key: 'exeMethod',
+                    align: 'center',
+                    render: (h, params) => {
+                        return this.dict.exeMethod.filter(item => {
+                            return params.row.exeMethod == item.value
+                        }).map(item => {
+                            return item.label
+                        })
+                    }
                 },
                 {
                     title: '权限值',
@@ -218,7 +264,7 @@ export default {
                                 on: {
                                     click: () => {
                                         this.$router.push({
-                                            name: 'opt_attr_management',
+                                            name: 'opt_attr_list',
                                             params: {
                                                 oid: params.row.id,
                                                 fid: this.fid
@@ -349,7 +395,43 @@ export default {
                         value: 'excel'
                     }
                 ],
-            }        
+                preMethod: [
+                    {
+                        label: 'GET',
+                        value: 'get'
+                    },
+                    {
+                        label: 'POST',
+                        value: 'post'
+                    },
+                    {
+                        label: 'PUT',
+                        value: 'put'
+                    },
+                    {
+                        label: 'DELETE',
+                        value: 'delete'
+                    },
+                ],
+                exeMethod: [
+                    {
+                        label: 'GET',
+                        value: 'get'
+                    },
+                    {
+                        label: 'POST',
+                        value: 'post'
+                    },
+                    {
+                        label: 'PUT',
+                        value: 'put'
+                    },
+                    {
+                        label: 'DELETE',
+                        value: 'delete'
+                    },
+                ],
+            }
         }
     },
     mounted () {
@@ -473,8 +555,10 @@ export default {
             this.saveForm.code = ''
             this.saveForm.type = ''
             this.saveForm.mode = ''
-            this.saveForm.exeUrl = ''
             this.saveForm.preUrl = ''
+            this.saveForm.preMethod =''
+            this.saveForm.exeUrl = ''
+            this.saveForm.exeMethod = ''
             this.saveForm.permissionTag = ''
         },
         clearPage () {
